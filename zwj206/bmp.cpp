@@ -6,6 +6,8 @@
 #include <string>
 
 using namespace std;
+// 本MFC使用的C++版本是 C++23preview，不是这个版本编译会报错
+// 
 // 实现了图像的加载与显示（显示是直接copy的，需要重新学习再复现）
 // 复现显示后删除这两条注释
 Errorstate LoadBmpFile(const char* BmpFileName, BITMAPINFOHEADER& infoheader, vector<BYTE>& pixeldata) {
