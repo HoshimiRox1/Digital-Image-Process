@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &Czwj206View::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_TOGREY, &Czwj206View::OnTogrey)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -155,3 +156,8 @@ Czwj206Doc* Czwj206View::GetDocument() const // 非调试版本是内联的
 
 
 // Czwj206View 消息处理程序
+
+void Czwj206View::OnTogrey()
+{
+	// TODO: 在此添加命令处理程序代码
+}
