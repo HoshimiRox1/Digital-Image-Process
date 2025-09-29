@@ -160,4 +160,41 @@ Czwj206Doc* Czwj206View::GetDocument() const // 非调试版本是内联的
 void Czwj206View::OnTogrey()
 {
 	// TODO: 在此添加命令处理程序代码
+	Czwj206Doc* pDoc = GetDocument();
+
+	// 确保已加载24位BMP图像
+	if (!pDoc || pDoc->pixeldata.empty() || pDoc->infoheader.biBitCount != 24) {
+		AfxMessageBox(_T("请先加载24位真彩图像。"), MB_OK | MB_ICONINFORMATION);
+		return;
+	}
+
+	// 准备循环变量
+	std::vector<BYTE>& pixeldata = pDoc->pixeldata;
+	int width = pDoc->infoheader.biWidth;
+	int height = pDoc->infoheader.biHeight;
+
+	// 向上取整到4的倍数
+	int pitch = (width * 3 + 3) & (~3);
+
+	// 遍历像素矩阵
+	for (int y = 0; y < height; y++) {
+		BYTE* pRow = pixeldata.data() + y * pitch;
+
+		for (int x = 0; x < width; x++) {
+			BYTE b = pRow[x * 3];
+			BYTE g = pRow[x * 3 + 1];
+			BYTE r = pRow[x * 3 + 2];
+
+			// 灰度转换公式——说是亮度加权平均法
+			// Gray = 0.299*R + 0.587*G + 0.114*B
+			BYTE gray = static_cast<BYTE>(0.299 * r + 0.587 * g + 0.114 * b);
+
+			// 灰度图中R=G=B=Gray
+			pRow[x * 3] = gray;
+			pRow[x * 3 + 1] = gray;
+			pRow[x * 3 + 2] = gray;
+		}
+	}
+
+	pDoc->UpdateAllViews(NULL);
 }
