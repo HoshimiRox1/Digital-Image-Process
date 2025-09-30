@@ -62,21 +62,40 @@ void Czwj206View::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
+	// 存储信息头和调色板数据
+	std::vector<BYTE> bmpInfoBuffer;
+
+	bmpInfoBuffer.resize(sizeof(BITMAPINFOHEADER));
+	memcpy(bmpInfoBuffer.data(), &(pDoc->infoheader), sizeof(BITMAPINFOHEADER));
+
+	if (!pDoc->colorPalette.empty()) {
+		size_t offset = bmpInfoBuffer.size();
+
+		size_t paletteSize = pDoc->colorPalette.size() * sizeof(RGBQUAD);
+		bmpInfoBuffer.resize(offset + paletteSize);
+
+		memcpy(bmpInfoBuffer.data() + offset,
+			pDoc->colorPalette.data(),
+			paletteSize);
+	}
+
+	BITMAPINFO* pbmi = reinterpret_cast<BITMAPINFO*>(bmpInfoBuffer.data());
+
+	int width = pDoc->infoheader.biWidth;
+	int height = pDoc->infoheader.biHeight;
+
 	if (!pDoc->pixeldata.empty())
 	{
-		BITMAPINFO bmi;
-		bmi.bmiHeader = pDoc->infoheader;
-
 		StretchDIBits(
 			pDC->GetSafeHdc(),
 			0, 0,
-			pDoc->infoheader.biWidth,
-			abs(pDoc->infoheader.biHeight),
+			width,
+			abs(height),
 			0, 0,
-			pDoc->infoheader.biWidth,
-			abs(pDoc->infoheader.biHeight),
+			width,
+			abs(height),
 			pDoc->pixeldata.data(),
-			&bmi,
+			pbmi,
 			DIB_RGB_COLORS,
 			SRCCOPY
 		);

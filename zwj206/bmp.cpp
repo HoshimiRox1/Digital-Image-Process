@@ -33,13 +33,13 @@ Errorstate LoadBmpFile(const char* BmpFileName,
 	// 读取信息头
 	file.read(reinterpret_cast<char*>(&infoheader), sizeof(infoheader));
 
-	if (infoheader.biBitCount == 24) {
+	/*if (infoheader.biBitCount == 24) {
 		AfxMessageBox(_T("24位图像"), MB_OK | MB_ICONINFORMATION);
 	}
 
 	if (infoheader.biBitCount == 1) {
 		AfxMessageBox(_T("2值图像"), MB_OK | MB_ICONINFORMATION);
-	}
+	}*/
 
 	// 读取调色板（仅在非24位真彩下）
 	DWORD paletteSize = 0;
@@ -55,14 +55,16 @@ Errorstate LoadBmpFile(const char* BmpFileName,
 		file.read(reinterpret_cast<char*>(colorPalette.data()), paletteSize * sizeof(RGBQUAD));
 	}
 
-	if (infoheader.biBitCount != 24 && infoheader.biBitCount != 8 && infoheader.biBitCount != 1) {
-		// 这里是你现在需要允许通过的深度
-		return LOAD_FAIL_UNSUPPORTED_DEPTH;
-	}
-
 	file.seekg(fileheader.bfOffBits, ios::beg);
 
-	DWORD Imagesize = infoheader.biWidth * abs(infoheader.biHeight) * 3;
+	// 根据位数动态调整像素矩阵大小
+	int bitRow = infoheader.biWidth * infoheader.biBitCount;
+
+	int ByteRow = (bitRow + 7) / 8;
+
+	int pitch = (ByteRow + 3) & (~3);
+	
+	DWORD Imagesize = abs(infoheader.biHeight) * pitch;
 
 	pixeldata.resize(Imagesize);
 	file.read(reinterpret_cast<char*>(pixeldata.data()), Imagesize);
