@@ -147,7 +147,7 @@ BOOL Czwj206Doc::OnOpenDocument(LPCTSTR lpszPathName)
 	CT2A strPath(lpszPathName);
 	const char* filePath = strPath;
 
-	Errorstate result = LoadBmpFile(filePath, infoheader, pixeldata);
+	Errorstate result = LoadBmpFile(filePath, infoheader, colorPalette, pixeldata);
 
 	switch (result) {
 	case Errorstate::success:

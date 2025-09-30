@@ -10,7 +10,11 @@ using namespace std;
 // 
 // 实现了图像的加载与显示（显示是直接copy的，需要重新学习再复现）
 // 复现显示后删除这两条注释
-Errorstate LoadBmpFile(const char* BmpFileName, BITMAPINFOHEADER& infoheader, vector<BYTE>& pixeldata) {
+Errorstate LoadBmpFile(const char* BmpFileName,
+	BITMAPINFOHEADER& infoheader,
+	vector<RGBQUAD>& colorPalette,
+	vector<BYTE>& pixeldata) 
+{
 	fstream file(BmpFileName, ios::in | ios::binary);
 	if (!file.is_open()) {
 		cerr << "Error：文件打开失败！" << endl;
@@ -26,12 +30,34 @@ Errorstate LoadBmpFile(const char* BmpFileName, BITMAPINFOHEADER& infoheader, ve
 		return Errorstate::type_error;
 	}
 
+	// 读取信息头
 	file.read(reinterpret_cast<char*>(&infoheader), sizeof(infoheader));
 
-	if (infoheader.biBitCount != 24) {
-		cerr << "Error：不是24位BMP文件！" << endl;
-		file.close();
-		return Errorstate::bit_error;
+	if (infoheader.biBitCount == 24) {
+		AfxMessageBox(_T("24位图像"), MB_OK | MB_ICONINFORMATION);
+	}
+
+	if (infoheader.biBitCount == 1) {
+		AfxMessageBox(_T("2值图像"), MB_OK | MB_ICONINFORMATION);
+	}
+
+	// 读取调色板（仅在非24位真彩下）
+	DWORD paletteSize = 0;
+	if (infoheader.biClrUsed == 0 && infoheader.biBitCount <= 8) {
+		paletteSize = 1 << infoheader.biBitCount;
+	}
+	else if (infoheader.biClrUsed > 0) {
+		paletteSize = infoheader.biClrUsed;
+	}
+
+	if (paletteSize > 0) {
+		colorPalette.resize(paletteSize);
+		file.read(reinterpret_cast<char*>(colorPalette.data()), paletteSize * sizeof(RGBQUAD));
+	}
+
+	if (infoheader.biBitCount != 24 && infoheader.biBitCount != 8 && infoheader.biBitCount != 1) {
+		// 这里是你现在需要允许通过的深度
+		return LOAD_FAIL_UNSUPPORTED_DEPTH;
 	}
 
 	file.seekg(fileheader.bfOffBits, ios::beg);
