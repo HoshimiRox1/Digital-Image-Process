@@ -140,43 +140,27 @@ void Czwj206Doc::Dump(CDumpContext& dc) const
 
 BOOL Czwj206Doc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-	if (!CDocument::OnOpenDocument(lpszPathName))
-		return FALSE;
-
-	// CT2A 是一个 MFC 宏，用于将宽字符路径（LPCTSTR）转换为窄字符（char*）
-	CT2A strPath(lpszPathName);
-	const char* filePath = strPath;
-
-	Errorstate result = LoadBmpFile(filePath, infoheader, colorPalette, pixeldata);
-
-	switch (result) {
-	case Errorstate::success:
-		UpdateAllViews(NULL);
-		return TRUE;
-	case Errorstate::file_error:
-		AfxMessageBox(_T("文件打开失败！"), MB_OK | MB_ICONERROR);
-		break;
-	case Errorstate::type_error:
-		AfxMessageBox(_T("文件类型错误！"), MB_OK | MB_ICONERROR);
-		break;
-	case Errorstate::bit_error:
-		AfxMessageBox(_T("文件位数错误！"), MB_OK | MB_ICONERROR);
-		break;
+	// 1. 释放上次加载的内存（C 风格编程必须手动释放）
+	if (lpBitsInfo != nullptr)
+	{
+		free(lpBitsInfo);
+		lpBitsInfo = nullptr;
 	}
 
-	// 调用你的独立函数来加载文件
-	//if (LoadBmpFile(filePath, infoheader, pixeldata))
-	//{
-	//	// 如果加载成功，通知所有视图更新
-	//	UpdateAllViews(NULL);
-	//	return TRUE;
-	//}
-	//else
-	//{
-	//	// 加载失败，弹出错误提示
-	//	AfxMessageBox(_T("Failed to load BMP file. Please ensure it is a valid 24-bit BMP."), MB_OK | MB_ICONERROR);
-	//	return FALSE;
-	//}
+	// 2. 调用老师的 C 风格加载函数
+	// 注意：MFC 使用 Unicode 字符串 (LPCTSTR)，但 fopen 需要 char*
+	// 需要进行类型转换，这里使用一个简单的宏或函数：
+	USES_CONVERSION;
 
-	return FALSE;
+	// 如果你的项目是 ANSI/多字节字符集，可以直接用 (const char*)lpszPathName
+	// 如果是 Unicode，则需要转换：
+	if (!LoadBmpFile(T2A(lpszPathName)))
+	{
+		// 加载失败，提示用户
+		AfxMessageBox(_T("加载 BMP 文件失败！"));
+		return FALSE;
+	}
+
+	// 3. 成功加载后，lpBitsInfo 现在指向了图像数据。
+	return TRUE;
 }

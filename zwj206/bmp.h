@@ -10,7 +10,13 @@ enum class Errorstate {
 	success
 };
 
-Errorstate LoadBmpFile(const char* BmpFileName,
-	BITMAPINFOHEADER& infoheader,
-	std::vector<RGBQUAD>& colorPalette,
-	std::vector<BYTE>& pixeldata);
+extern LPBITMAPINFO lpBitsInfo;
+
+BOOL LoadBmpFile(const char* BmpFileName);
+
+//Errorstate LoadBmpFile(const char* BmpFileName,
+//	BITMAPINFOHEADER& infoheader,
+//	std::vector<RGBQUAD>& colorPalette,
+//	std::vector<BYTE>& pixeldata);
+
+void Gray();

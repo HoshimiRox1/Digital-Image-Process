@@ -3,6 +3,7 @@
 //
 
 #include "pch.h"
+#include "bmp.h"
 #include "framework.h"
 // SHARED_HANDLERS 可以在实现预览、缩略图和搜索筛选器句柄的
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
@@ -30,6 +31,7 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_TOGREY, &Czwj206View::OnTogrey)
+	ON_UPDATE_COMMAND_UI(ID_TOGREY, &Czwj206View::OnUpdateTogrey)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -58,48 +60,37 @@ void Czwj206View::OnDraw(CDC* pDC)
 {
 	Czwj206Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	if (!pDoc)
+
+	// 检查全局指针是否有效（图像是否已加载）
+	if (lpBitsInfo == nullptr)
 		return;
 
-	// TODO: 在此处为本机数据添加绘制代码
-	// 存储信息头和调色板数据
-	std::vector<BYTE> bmpInfoBuffer;
+	// 获取客户区大小
+	CRect rect;
+	GetClientRect(&rect);
 
-	bmpInfoBuffer.resize(sizeof(BITMAPINFOHEADER));
-	memcpy(bmpInfoBuffer.data(), &(pDoc->infoheader), sizeof(BITMAPINFOHEADER));
+	// 获取图像信息
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int biBitCount = lpBitsInfo->bmiHeader.biBitCount;
 
-	if (!pDoc->colorPalette.empty()) {
-		size_t offset = bmpInfoBuffer.size();
+	// 获取像素数据的起始地址
+	// 与 Gray() 函数中的计算方式一致
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 
-		size_t paletteSize = pDoc->colorPalette.size() * sizeof(RGBQUAD);
-		bmpInfoBuffer.resize(offset + paletteSize);
-
-		memcpy(bmpInfoBuffer.data() + offset,
-			pDoc->colorPalette.data(),
-			paletteSize);
-	}
-
-	BITMAPINFO* pbmi = reinterpret_cast<BITMAPINFO*>(bmpInfoBuffer.data());
-
-	int width = pDoc->infoheader.biWidth;
-	int height = pDoc->infoheader.biHeight;
-
-	if (!pDoc->pixeldata.empty())
-	{
-		StretchDIBits(
-			pDC->GetSafeHdc(),
-			0, 0,
-			width,
-			abs(height),
-			0, 0,
-			width,
-			abs(height),
-			pDoc->pixeldata.data(),
-			pbmi,
-			DIB_RGB_COLORS,
-			SRCCOPY
-		);
-	}
+	// 使用 Windows API 函数将 DIB 数据绘制到屏幕上
+	// 注意：
+	// 1. DIB_RGB_COLORS 表示调色板或颜色数据是 RGBQUAD 格式。
+	// 2. 图像通常从左下角 (0, 0) 开始绘制。
+	StretchDIBits(
+		pDC->GetSafeHdc(), // 设备句柄
+		0, 0, rect.Width(), rect.Height(), // 目标矩形 (缩放到窗口大小)
+		0, 0, w, h, // 源矩形
+		lpBits, // 像素数据
+		lpBitsInfo, // BITMAPINFO 结构体
+		DIB_RGB_COLORS, // 颜色使用 RGB 模式
+		SRCCOPY // 复制源图像
+	);
 }
 
 void Czwj206View::OnInitialUpdate()
@@ -175,45 +166,18 @@ Czwj206Doc* Czwj206View::GetDocument() const // 非调试版本是内联的
 
 
 // Czwj206View 消息处理程序
-
+void Gray();
 void Czwj206View::OnTogrey()
 {
-	// TODO: 在此添加命令处理程序代码
-	Czwj206Doc* pDoc = GetDocument();
-
-	// 确保已加载24位BMP图像
-	if (!pDoc || pDoc->pixeldata.empty() || pDoc->infoheader.biBitCount != 24) {
-		AfxMessageBox(_T("请先加载24位真彩图像。"), MB_OK | MB_ICONINFORMATION);
+	if (lpBitsInfo == nullptr)
 		return;
-	}
+	// TODO: 在此添加命令处理程序代码
+	Gray();
+	Invalidate();
+}
 
-	// 准备循环变量
-	std::vector<BYTE>& pixeldata = pDoc->pixeldata;
-	int width = pDoc->infoheader.biWidth;
-	int height = pDoc->infoheader.biHeight;
-
-	// 向上取整到4的倍数
-	int pitch = (width * 3 + 3) & (~3);
-
-	// 遍历像素矩阵
-	for (int y = 0; y < height; y++) {
-		BYTE* pRow = pixeldata.data() + y * pitch;
-
-		for (int x = 0; x < width; x++) {
-			BYTE b = pRow[x * 3];
-			BYTE g = pRow[x * 3 + 1];
-			BYTE r = pRow[x * 3 + 2];
-
-			// 灰度转换公式——说是亮度加权平均法
-			// Gray = 0.299*R + 0.587*G + 0.114*B
-			BYTE gray = static_cast<BYTE>(0.299 * r + 0.587 * g + 0.114 * b);
-
-			// 灰度图中R=G=B=Gray
-			pRow[x * 3] = gray;
-			pRow[x * 3 + 1] = gray;
-			pRow[x * 3 + 2] = gray;
-		}
-	}
-
-	pDoc->UpdateAllViews(NULL);
+void Czwj206View::OnUpdateTogrey(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != nullptr && 24 == lpBitsInfo->bmiHeader.biBitCount);
 }
