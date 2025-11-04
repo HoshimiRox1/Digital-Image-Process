@@ -47,6 +47,7 @@ protected:
 public:
 	afx_msg void OnTogrey();
 	afx_msg void OnUpdateTogrey(CCmdUI* pCmdUI);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本

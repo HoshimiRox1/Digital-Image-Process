@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_TOGREY, &Czwj206View::OnTogrey)
 	ON_UPDATE_COMMAND_UI(ID_TOGREY, &Czwj206View::OnUpdateTogrey)
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -58,39 +59,50 @@ BOOL Czwj206View::PreCreateWindow(CREATESTRUCT& cs)
 
 void Czwj206View::OnDraw(CDC* pDC)
 {
-	Czwj206Doc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
+    // 获取 Document 指针（保持不变）
+    Czwj206Doc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
 
-	// 检查全局指针是否有效（图像是否已加载）
-	if (lpBitsInfo == nullptr)
-		return;
+    // 检查全局指针是否有效（保持不变）
+    if (lpBitsInfo == nullptr)
+        return;
 
-	// 获取客户区大小
-	CRect rect;
-	GetClientRect(&rect);
+    // 1. 获取图像的原始尺寸
+    int w = lpBitsInfo->bmiHeader.biWidth;
+    int h = lpBitsInfo->bmiHeader.biHeight;
+    // 确保使用绝对高度，因为 BMP 图像头可能存储负值
+    int absH = abs(h);
 
-	// 获取图像信息
-	int w = lpBitsInfo->bmiHeader.biWidth;
-	int h = lpBitsInfo->bmiHeader.biHeight;
-	int biBitCount = lpBitsInfo->bmiHeader.biBitCount;
+    // 2. 获取窗口尺寸和计算居中位置
+    CRect rectClient;
+    GetClientRect(&rectClient);
 
-	// 获取像素数据的起始地址
-	// 与 Gray() 函数中的计算方式一致
-	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+    // 计算居中显示的起始坐标 (左上角)
+    int xStart = (rectClient.Width() - w) / 2;
+    int yStart = (rectClient.Height() - absH) / 2;
 
-	// 使用 Windows API 函数将 DIB 数据绘制到屏幕上
-	// 注意：
-	// 1. DIB_RGB_COLORS 表示调色板或颜色数据是 RGBQUAD 格式。
-	// 2. 图像通常从左下角 (0, 0) 开始绘制。
-	StretchDIBits(
-		pDC->GetSafeHdc(), // 设备句柄
-		0, 0, rect.Width(), rect.Height(), // 目标矩形 (缩放到窗口大小)
-		0, 0, w, h, // 源矩形
-		lpBits, // 像素数据
-		lpBitsInfo, // BITMAPINFO 结构体
-		DIB_RGB_COLORS, // 颜色使用 RGB 模式
-		SRCCOPY // 复制源图像
-	);
+    // 3. 获取像素数据的起始地址
+    // 保持与 Gray() 函数中的计算方式一致
+    BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+
+    // 4. 使用 StretchDIBits 绘制
+
+    // 关键点：将目标矩形的宽度和高度设置为图像的原始宽度 w 和 absH
+    StretchDIBits(
+        pDC->GetSafeHdc(),     // 设备句柄
+        xStart,                // 目标 X 坐标 (居中)
+        yStart,                // 目标 Y 坐标 (居中)
+        w,                     // **目标宽度：设置为图像原始宽度**
+        absH,                  // **目标高度：设置为图像原始高度**
+        0,                     // 源 X 坐标 (从图像左侧开始)
+        0,                     // 源 Y 坐标 (从图像底部开始)
+        w,                     // 源宽度 (图像原始宽度)
+        absH,                  // 源高度 (图像原始高度)
+        lpBits,                // 像素数据
+        lpBitsInfo,            // BITMAPINFO 结构体
+        DIB_RGB_COLORS,        // 颜色使用 RGB 模式
+        SRCCOPY                // 复制源图像
+    );
 }
 
 void Czwj206View::OnInitialUpdate()
@@ -180,4 +192,11 @@ void Czwj206View::OnUpdateTogrey(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != nullptr && 24 == lpBitsInfo->bmiHeader.biBitCount);
+}
+
+void Czwj206View::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CScrollView::OnMouseMove(nFlags, point);
 }
