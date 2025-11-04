@@ -90,8 +90,8 @@ void Czwj206View::OnDraw(CDC* pDC)
     // 关键点：将目标矩形的宽度和高度设置为图像的原始宽度 w 和 absH
     StretchDIBits(
         pDC->GetSafeHdc(),     // 设备句柄
-        xStart,                // 目标 X 坐标 (居中)
-        yStart,                // 目标 Y 坐标 (居中)
+        0,					   // 左上角x
+        0,					   // 左上角y
         w,                     // **目标宽度：设置为图像原始宽度**
         absH,                  // **目标高度：设置为图像原始高度**
         0,                     // 源 X 坐标 (从图像左侧开始)
@@ -194,9 +194,26 @@ void Czwj206View::OnUpdateTogrey(CCmdUI* pCmdUI)
 	pCmdUI->Enable(lpBitsInfo != nullptr && 24 == lpBitsInfo->bmiHeader.biBitCount);
 }
 
+void pixel(int i, int j, char*);
 void Czwj206View::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// 同步滚动条的位置
+	CPoint pt = GetScrollPosition();
+	point.x += pt.x;
+	point.y += pt.y;
+
+	//
+	char xy[100];
+	memset(xy, 100, 100);
+	sprintf(xy, "x:%d, y:%d    ", point.x, point.y);
+
+	char rgb[100];
+	memset(rgb, 0, 100);
+	pixel(point.y, point.x, rgb);
+
+	strcat(xy, rgb);
+	((CFrameWnd*)GetParent())->SetMessageText(CString(xy));
 
 	CScrollView::OnMouseMove(nFlags, point);
 }
