@@ -16,11 +16,6 @@ protected: // 仅从序列化创建
 
 	// 特性
 public:
-	// 存储信息头、调色板、像素数据
-	BITMAPINFOHEADER infoheader;
-	std::vector<RGBQUAD> colorPalette;
-	std::vector<BYTE> pixeldata;
-
 	// 操作
 public:
 

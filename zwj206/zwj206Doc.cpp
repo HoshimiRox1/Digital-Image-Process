@@ -147,20 +147,15 @@ BOOL Czwj206Doc::OnOpenDocument(LPCTSTR lpszPathName)
 		lpBitsInfo = nullptr;
 	}
 
-	// 2. 调用老师的 C 风格加载函数
-	// 注意：MFC 使用 Unicode 字符串 (LPCTSTR)，但 fopen 需要 char*
-	// 需要进行类型转换，这里使用一个简单的宏或函数：
 	USES_CONVERSION;
 
 	// 如果你的项目是 ANSI/多字节字符集，可以直接用 (const char*)lpszPathName
 	// 如果是 Unicode，则需要转换：
 	if (!LoadBmpFile(T2A(lpszPathName)))
 	{
-		// 加载失败，提示用户
 		AfxMessageBox(_T("加载 BMP 文件失败！"));
 		return FALSE;
 	}
 
-	// 3. 成功加载后，lpBitsInfo 现在指向了图像数据。
 	return TRUE;
 }

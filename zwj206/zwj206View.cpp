@@ -77,17 +77,11 @@ void Czwj206View::OnDraw(CDC* pDC)
     CRect rectClient;
     GetClientRect(&rectClient);
 
-    // 计算居中显示的起始坐标 (左上角)
-    int xStart = (rectClient.Width() - w) / 2;
-    int yStart = (rectClient.Height() - absH) / 2;
-
     // 3. 获取像素数据的起始地址
     // 保持与 Gray() 函数中的计算方式一致
     BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 
     // 4. 使用 StretchDIBits 绘制
-
-    // 关键点：将目标矩形的宽度和高度设置为图像的原始宽度 w 和 absH
     StretchDIBits(
         pDC->GetSafeHdc(),     // 设备句柄
         0,					   // 左上角x
