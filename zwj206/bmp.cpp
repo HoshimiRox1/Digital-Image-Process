@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "bmp.h"
 
 #include <iostream>
@@ -6,14 +6,14 @@
 #include <string>
 
 using namespace std;
-// ±¾MFCÊ¹ÓÃµÄC++°æ±¾ÊÇ C++23preview£¬²»ÊÇÕâ¸ö°æ±¾±àÒë»á±¨´í£¨¿ÉÄÜ°É£©
+// æœ¬MFCä½¿ç”¨çš„C++ç‰ˆæœ¬æ˜¯ C++23previewï¼Œä¸æ˜¯è¿™ä¸ªç‰ˆæœ¬ç¼–è¯‘ä¼šæŠ¥é”™ï¼ˆå¯èƒ½å§ï¼‰
 
 LPBITMAPINFO lpBitsInfo = nullptr;
 BITMAPINFO* lpDIB_FT;
 BITMAPINFO* lpDIB_IFT;
 complex<double>* gFD = NULL;
 
-// ¼ÓÔØÍ¼ÏñÎÄ¼ş
+// åŠ è½½å›¾åƒæ–‡ä»¶
 BOOL LoadBmpFile(const char* BmpFileName) 
 {	
 	FILE* fp;
@@ -64,7 +64,7 @@ BOOL LoadBmpFile(const char* BmpFileName)
 	return TRUE;
 }
 
-// 24Î»Õæ²Ê×ª»Ò¶ÈÍ¼Ïñ
+// 24ä½çœŸå½©è½¬ç°åº¦å›¾åƒ
 void Gray()
 {
 	int w = lpBitsInfo->bmiHeader.biWidth;
@@ -88,7 +88,7 @@ void Gray()
 	}
 }
 
-// ¼ì²âÊÇ·ñÎª»Ò¶ÈÍ¼Ïñ
+// æ£€æµ‹æ˜¯å¦ä¸ºç°åº¦å›¾åƒ
 bool IsGray() {
 	int r, g, b;
 	if (8 == lpBitsInfo->bmiHeader.biBitCount) {
@@ -102,7 +102,7 @@ bool IsGray() {
 	return false;
 }
 
-// ¶ÁÈ¡ÏñËØÊı¾İ
+// è¯»å–åƒç´ æ•°æ®
 void pixel(int i, int j, char* str) {
 	if (nullptr == lpBitsInfo)
 		return;
@@ -129,7 +129,7 @@ void pixel(int i, int j, char* str) {
 		pixel = lpBits + LineBytes * (h - 1 - i) + j;
 		
 		if(IsGray())
-			sprintf(str, "»Ò¶ÈÖµ£º%d", *pixel);
+			sprintf(str, "ç°åº¦å€¼ï¼š%d", *pixel);
 		else {
 			r = lpBitsInfo->bmiColors[*pixel].rgbRed;
 			g = lpBitsInfo->bmiColors[*pixel].rgbGreen;
@@ -156,14 +156,14 @@ void pixel(int i, int j, char* str) {
 	case 1:
 		bv = *(lpBits + LineBytes * (h - 1 - i) + j / 8) & (1 << (7 - j % 8));
 		if (0 == bv)
-			strcpy(str, "±³¾°µã");
+			strcpy(str, "èƒŒæ™¯ç‚¹");
 		else
-			strcpy(str, "Ç°¾°µã");
+			strcpy(str, "å‰æ™¯ç‚¹");
 		break;
 	}
 }
 
-// Ö±·½Í¼Êı×é
+// ç›´æ–¹å›¾æ•°ç»„
 DWORD H[256];
 void Histogram() {
 	int w = lpBitsInfo->bmiHeader.biWidth;
@@ -186,7 +186,7 @@ void Histogram() {
 	}
 }
 
-// ÏßĞÔµãÔËËã
+// çº¿æ€§ç‚¹è¿ç®—
 void LineTrans(float a, float b)
 {
 	int w = lpBitsInfo->bmiHeader.biWidth;
@@ -223,7 +223,7 @@ void Equalize()
 	BYTE* pixel;
 	int temp;
 	BYTE Map[256];
-	Histogram();//È«¾ÖµÄÖ±·½Í¼
+	Histogram();//å…¨å±€çš„ç›´æ–¹å›¾
 
 	for (i = 0; i < 256; i++)
 	{
@@ -244,7 +244,7 @@ void Equalize()
 	}
 }
 
-// ¸µÀïÒ¶±ä»»
+// å‚…é‡Œå¶å˜æ¢
 void FT(complex<double>* TD, complex<double>* FD, int m)
 {
 	int x, u;
@@ -261,7 +261,7 @@ void FT(complex<double>* TD, complex<double>* FD, int m)
 	}
 }
 
-// ·´±ä»»
+// åå˜æ¢
 void IFT(complex<double>* FD, complex<double>* TD, int m)
 {
 	int x, u;
@@ -277,14 +277,14 @@ void IFT(complex<double>* FD, complex<double>* TD, int m)
 	}
 }
 
-// ¸µÀïÒ¶±ä»»ÏÔÊ¾
+// å‚…é‡Œå¶å˜æ¢æ˜¾ç¤º
 void Fourier() {
 	int w = lpBitsInfo->bmiHeader.biWidth;
 	int h = lpBitsInfo->bmiHeader.biHeight;
 	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	complex<double>* TD = new complex<double>[w * h];
 	complex<double>* FD = new complex<double>[w * h];
 
@@ -292,29 +292,29 @@ void Fourier() {
 	BYTE* pixel;
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			// Ö¸ÏòÏñËØµã(i,j)µÄÖ¸Õë
+			// æŒ‡å‘åƒç´ ç‚¹(i,j)çš„æŒ‡é’ˆ
 			pixel = lpBits + LineBytes * (h - 1 - i) + j;
-			TD[w * i + j] = complex<double>(*pixel * pow(-1, i + j), 0);//TDµÄ³õÊ¼»¯²Ù×÷
+			TD[w * i + j] = complex<double>(*pixel * pow(-1, i + j), 0);//TDçš„åˆå§‹åŒ–æ“ä½œ
 		}
 	}
-	// Ò»´Î¸µÀïÒ¶±ä»»£¬ÑØĞĞ·½Ïò×ö¸µÀïÒ¶±ä»»
+	// ä¸€æ¬¡å‚…é‡Œå¶å˜æ¢ï¼Œæ²¿è¡Œæ–¹å‘åšå‚…é‡Œå¶å˜æ¢
 	for (i = 0; i < h; i++) {
 		FT(&TD[i * w], &FD[i * w], w);
 	}
 
-	// ½«FD×ªÖÃ
+	// å°†FDè½¬ç½®
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			TD[h * j + i] = FD[w * i + j];
 		}
 	}
 
-	// ¶ş´Î¸µÀïÒ¶±ä»»
+	// äºŒæ¬¡å‚…é‡Œå¶å˜æ¢
 	for (i = 0; i < w; i++) {
 		FT(&TD[i * h], &FD[i * h], h);
 	}
 
-	// ½á¹û¿ÉÊÓ»¯
+	// ç»“æœå¯è§†åŒ–
 	LONG size = 40 + 1024 + LineBytes * h;
 	lpDIB_FT = (BITMAPINFO*)malloc(size);
 	if (NULL == lpDIB_FT)
@@ -326,7 +326,7 @@ void Fourier() {
 	double temp;
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			// Ö¸ÏòÏñËØµã(i,j)µÄÖ¸Õë
+			// æŒ‡å‘åƒç´ ç‚¹(i,j)çš„æŒ‡é’ˆ
 			pixel = lpBits + LineBytes * (h - 1 - i) + j;
 			temp = sqrt(FD[j * h + i].real() * FD[j * h + i].real() +
 				FD[j * h + i].imag() * FD[j * h + i].imag()) * 2000;
@@ -345,7 +345,7 @@ BOOL is_gFD_OK()
 	return(gFD != NULL);
 }
 
-// ¸µÀïÒ¶·´±ä»»ÏÔÊ¾
+// å‚…é‡Œå¶åå˜æ¢æ˜¾ç¤º
 void IFourier() {
 
 	int w = lpBitsInfo->bmiHeader.biWidth;
@@ -353,35 +353,35 @@ void IFourier() {
 	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	complex<double>* TD = new complex<double>[w * h];
 	complex<double>* FD = new complex<double>[w * h];
 
-	// ×ªÖÃ»ØÈ¥
+	// è½¬ç½®å›å»
 	int i, j;
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			FD[w * i + j] = gFD[i + h * j];
 		}
 	}
-	// Ò»´Î¸µÀïÒ¶·´±ä»»
+	// ä¸€æ¬¡å‚…é‡Œå¶åå˜æ¢
 	for (i = 0; i < h; i++) {
 		IFT(&FD[i * w], &TD[i * w], w);
 	}
 
-	// ½«TD×ªÖÃ
+	// å°†TDè½¬ç½®
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			FD[h * j + i] = TD[w * i + j];
 		}
 	}
 
-	// ¶ş´Î¸µÀïÒ¶·´±ä»»
+	// äºŒæ¬¡å‚…é‡Œå¶åå˜æ¢
 	for (i = 0; i < w; i++) {
 		IFT(&FD[i * h], &TD[i * h], h);
 	}
 
-	// ¼ÆËã½á¹û¿ÉÊÓ»¯
+	// è®¡ç®—ç»“æœå¯è§†åŒ–
 	DWORD size = 40 + 1024 + LineBytes * h;
 	lpDIB_IFT = (BITMAPINFO*)malloc(size);
 	if (NULL == lpDIB_IFT)return;
@@ -392,7 +392,7 @@ void IFourier() {
 	BYTE* pixel;
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			// Ö¸ÏòÏñËØµã(i,j)µÄÖ¸Õë
+			// æŒ‡å‘åƒç´ ç‚¹(i,j)çš„æŒ‡é’ˆ
 			pixel = lpBits + LineBytes * (h - 1 - i) + j;
 			*pixel = (BYTE)(TD[j * h + i].real() / pow(-1, i + j));
 		}
@@ -408,12 +408,12 @@ BOOL FD_Available() {
 	return (gFD != NULL);
 }
 
-// ¿ìËÙ¸µÀïÒ¶±ä»»
+// å¿«é€Ÿå‚…é‡Œå¶å˜æ¢
 void FFT(complex<double>* TD, complex<double>* FD, int r)
 {
-	// ¼ÆËã¸µÀïÒ¶±ä»»µãÊı
+	// è®¡ç®—å‚…é‡Œå¶å˜æ¢ç‚¹æ•°
 	LONG count = 1 << r;
-	// ¼ÆËã¼ÓÈ¨ÏµÊı
+	// è®¡ç®—åŠ æƒç³»æ•°
 	int i;
 	double angle;
 	complex<double>* W = new complex<double>[count / 2];
@@ -422,11 +422,11 @@ void FFT(complex<double>* TD, complex<double>* FD, int r)
 		angle = -i * PI * 2 / count;
 		W[i] = complex<double>(cos(angle), sin(angle));
 	}
-	// ½«Ê±ÓòµãĞ´ÈëX1
+	// å°†æ—¶åŸŸç‚¹å†™å…¥X1
 	complex<double>* X1 = new complex<double>[count];
 	memcpy(X1, TD, sizeof(complex<double>) * count);
 
-	// ²ÉÓÃµûĞÎËã·¨½øĞĞ¿ìËÙ¸¶Á¢Ò¶±ä»»£¬Êä³öÎªÆµÓòÖµX2
+	// é‡‡ç”¨è¶å½¢ç®—æ³•è¿›è¡Œå¿«é€Ÿä»˜ç«‹å¶å˜æ¢ï¼Œè¾“å‡ºä¸ºé¢‘åŸŸå€¼X2
 	complex<double>* X2 = new complex<double>[count];
 
 	int k, j, p, size;
@@ -448,7 +448,7 @@ void FFT(complex<double>* TD, complex<double>* FD, int r)
 		X2 = temp;
 	}
 
-	// ÖØĞÂÅÅĞò£¨ÂëÎ»µ¹ĞòÅÅÁĞ£©
+	// é‡æ–°æ’åºï¼ˆç ä½å€’åºæ’åˆ—ï¼‰
 	for (j = 0; j < count; j++)
 	{
 		p = 0;
@@ -463,7 +463,7 @@ void FFT(complex<double>* TD, complex<double>* FD, int r)
 		FD[j] /= count;
 	}
 
-	// ÊÍ·ÅÄÚ´æ
+	// é‡Šæ”¾å†…å­˜
 	delete W;
 	delete X1;
 	delete X2;
@@ -471,16 +471,16 @@ void FFT(complex<double>* TD, complex<double>* FD, int r)
 
 void FFourier()
 {
-	//Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	//å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int width = lpBitsInfo->bmiHeader.biWidth;
 	int height = lpBitsInfo->bmiHeader.biHeight;
 	int LineBytes = (width * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
-	//Ö¸ÏòÍ¼ÏñÊı¾İÖ¸Õë
+	//æŒ‡å‘å›¾åƒæ•°æ®æŒ‡é’ˆ
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[256];
 
-	// FFT¿í¶È£¨±ØĞëÎª2µÄÕûÊı´Î·½£©
+	// FFTå®½åº¦ï¼ˆå¿…é¡»ä¸º2çš„æ•´æ•°æ¬¡æ–¹ï¼‰
 	int FFT_w = 1;
-	// FFT¿í¶ÈµÄÃİÊı£¬¼´µü´ú´ÎÊı
+	// FFTå®½åº¦çš„å¹‚æ•°ï¼Œå³è¿­ä»£æ¬¡æ•°
 	int wp = 0;
 	while (FFT_w * 2 <= width)
 	{
@@ -488,9 +488,9 @@ void FFourier()
 		wp++;
 	}
 
-	// FFT¸ß¶È£¨±ØĞëÎª2µÄÕûÊı´Î·½£©
+	// FFTé«˜åº¦ï¼ˆå¿…é¡»ä¸º2çš„æ•´æ•°æ¬¡æ–¹ï¼‰
 	int FFT_h = 1;
-	// FFT¸ß¶ÈµÄÃİÊı£¬¼´µü´ú´ÎÊı
+	// FFTé«˜åº¦çš„å¹‚æ•°ï¼Œå³è¿­ä»£æ¬¡æ•°
 	int hp = 0;
 	while (FFT_h * 2 <= height)
 	{
@@ -498,32 +498,32 @@ void FFourier()
 		hp++;
 	}
 
-	// ·ÖÅäÄÚ´æ
+	// åˆ†é…å†…å­˜
 	complex<double>* TD = new complex<double>[FFT_w * FFT_h];
 	complex<double>* FD = new complex<double>[FFT_w * FFT_h];
 
 	int i, j;
 	BYTE* pixel;
 
-	for (i = 0; i < FFT_h; i++)  // ĞĞ
+	for (i = 0; i < FFT_h; i++)  // è¡Œ
 	{
-		for (j = 0; j < FFT_w; j++)  // ÁĞ
+		for (j = 0; j < FFT_w; j++)  // åˆ—
 		{
-			// Ö¸ÏòDIBµÚiĞĞ£¬µÚj¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘DIBç¬¬iè¡Œï¼Œç¬¬jä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			pixel = lpBits + LineBytes * (height - 1 - i) + j;
 
-			// ¸øÊ±Óò¸³Öµ
+			// ç»™æ—¶åŸŸèµ‹å€¼
 			TD[j + FFT_w * i] = complex<double>(*pixel * pow(-1, i + j), 0);
 		}
 	}
 
 	for (i = 0; i < FFT_h; i++)
 	{
-		// ¶Ôy·½Ïò½øĞĞ¿ìËÙ¸¶Á¢Ò¶±ä»»
+		// å¯¹yæ–¹å‘è¿›è¡Œå¿«é€Ÿä»˜ç«‹å¶å˜æ¢
 		FFT(&TD[FFT_w * i], &FD[FFT_w * i], wp);
 	}
 
-	// ±£´æÖĞ¼ä±ä»»½á¹û
+	// ä¿å­˜ä¸­é—´å˜æ¢ç»“æœ
 	for (i = 0; i < FFT_h; i++)
 	{
 		for (j = 0; j < FFT_w; j++)
@@ -534,43 +534,43 @@ void FFourier()
 
 	for (i = 0; i < FFT_w; i++)
 	{
-		// ¶Ôx·½Ïò½øĞĞ¿ìËÙ¸¶Á¢Ò¶±ä»»
+		// å¯¹xæ–¹å‘è¿›è¡Œå¿«é€Ÿä»˜ç«‹å¶å˜æ¢
 		FFT(&TD[i * FFT_h], &FD[i * FFT_h], hp);
 	}
 
-	// É¾³ıÁÙÊ±±äÁ¿
+	// åˆ é™¤ä¸´æ—¶å˜é‡
 	delete TD;
 
-	//Éú³ÉÆµÆ×Í¼Ïñ
-	//ÎªÆµÓòÍ¼Ïñ·ÖÅäÄÚ´æ
+	//ç”Ÿæˆé¢‘è°±å›¾åƒ
+	//ä¸ºé¢‘åŸŸå›¾åƒåˆ†é…å†…å­˜
 	LONG size = 40 + 1024 + LineBytes * height;
 	lpDIB_FT = (LPBITMAPINFO)malloc(size);
 	if (NULL == lpDIB_FT)
 		return;
 	memcpy(lpDIB_FT, lpBitsInfo, size);
 
-	//Ö¸ÏòÆµÓòÍ¼ÏñÊı¾İÖ¸Õë
+	//æŒ‡å‘é¢‘åŸŸå›¾åƒæ•°æ®æŒ‡é’ˆ
 	lpBits = (BYTE*)&lpDIB_FT->bmiColors[256];
 
 	double temp;
-	for (i = 0; i < FFT_h; i++) // ĞĞ
+	for (i = 0; i < FFT_h; i++) // è¡Œ
 	{
-		for (j = 0; j < FFT_w; j++) // ÁĞ
+		for (j = 0; j < FFT_w; j++) // åˆ—
 		{
-			// ¼ÆËãÆµÆ×·ù¶È
+			// è®¡ç®—é¢‘è°±å¹…åº¦
 			temp = sqrt(FD[j * FFT_h + i].real() * FD[j * FFT_h + i].real() +
 				FD[j * FFT_h + i].imag() * FD[j * FFT_h + i].imag()) * 2000;
 
-			// ÅĞ¶ÏÊÇ·ñ³¬¹ı255
+			// åˆ¤æ–­æ˜¯å¦è¶…è¿‡255
 			if (temp > 255)
 			{
-				// ¶ÔÓÚ³¬¹ıµÄ£¬Ö±½ÓÉèÖÃÎª255
+				// å¯¹äºè¶…è¿‡çš„ï¼Œç›´æ¥è®¾ç½®ä¸º255
 				temp = 255;
 			}
 
 			pixel = lpBits + LineBytes * (height - 1 - i) + j;
 
-			// ¸üĞÂÔ´Í¼Ïñ
+			// æ›´æ–°æºå›¾åƒ
 			*pixel = (BYTE)(temp);
 		}
 	}
@@ -579,45 +579,45 @@ void FFourier()
 
 }
 
-//IFFT·´±ä»»
+//IFFTåå˜æ¢
 void IFFT(complex<double>* FD, complex<double>* TD, int r)
 {
-	// ¸µÀïÒ¶±ä»»µãÊı
+	// å‚…é‡Œå¶å˜æ¢ç‚¹æ•°
 	LONG count;
-	// ¼ÆËã¸µÀïÒ¶±ä»»µãÊı
+	// è®¡ç®—å‚…é‡Œå¶å˜æ¢ç‚¹æ•°
 	count = 1 << r;
 
-	// ·ÖÅäÔËËãËùĞè´æ´¢Æ÷
+	// åˆ†é…è¿ç®—æ‰€éœ€å­˜å‚¨å™¨
 	complex<double>* X = new complex<double>[count];
-	// ½«ÆµÓòµãĞ´ÈëX
+	// å°†é¢‘åŸŸç‚¹å†™å…¥X
 	memcpy(X, FD, sizeof(complex<double>) * count);
 
-	// Çó¹²éî
+	// æ±‚å…±è½­
 	for (int i = 0; i < count; i++)
 		X[i] = complex<double>(X[i].real(), -X[i].imag());
 
-	// µ÷ÓÃ¿ìËÙ¸µÀïÒ¶±ä»»
+	// è°ƒç”¨å¿«é€Ÿå‚…é‡Œå¶å˜æ¢
 	FFT(X, TD, r);
 
-	// ÇóÊ±ÓòµãµÄ¹²éî
+	// æ±‚æ—¶åŸŸç‚¹çš„å…±è½­
 	for (int i = 0; i < count; i++)
 		TD[i] = complex<double>(TD[i].real() * count, -TD[i].imag() * count);
 
-	// ÊÍ·ÅÄÚ´æ
+	// é‡Šæ”¾å†…å­˜
 	delete X;
 }
 
 
 void IFFourier()
 {
-	//Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	//å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int width = lpBitsInfo->bmiHeader.biWidth;
 	int height = lpBitsInfo->bmiHeader.biHeight;
 	int LineBytes = (width * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
 
-	// FFT¿í¶È£¨±ØĞëÎª2µÄÕûÊı´Î·½£©
+	// FFTå®½åº¦ï¼ˆå¿…é¡»ä¸º2çš„æ•´æ•°æ¬¡æ–¹ï¼‰
 	int FFT_w = 1;
-	// FFT¿í¶ÈµÄÃİÊı£¬¼´µü´ú´ÎÊı
+	// FFTå®½åº¦çš„å¹‚æ•°ï¼Œå³è¿­ä»£æ¬¡æ•°
 	int wp = 0;
 	while (FFT_w * 2 <= width)
 	{
@@ -625,9 +625,9 @@ void IFFourier()
 		wp++;
 	}
 
-	// FFT¸ß¶È£¨±ØĞëÎª2µÄÕûÊı´Î·½£©
+	// FFTé«˜åº¦ï¼ˆå¿…é¡»ä¸º2çš„æ•´æ•°æ¬¡æ–¹ï¼‰
 	int FFT_h = 1;
-	// FFT¸ß¶ÈµÄÃİÊı£¬¼´µü´ú´ÎÊı
+	// FFTé«˜åº¦çš„å¹‚æ•°ï¼Œå³è¿­ä»£æ¬¡æ•°
 	int hp = 0;
 	while (FFT_h * 2 <= height)
 	{
@@ -635,29 +635,29 @@ void IFFourier()
 		hp++;
 	}
 
-	// ·ÖÅäÄÚ´æ
+	// åˆ†é…å†…å­˜
 	complex<double>* TD = new complex<double>[FFT_w * FFT_h];
 	complex<double>* FD = new complex<double>[FFT_w * FFT_h];
 
 	int i, j;
-	for (i = 0; i < FFT_h; i++)  // ĞĞ
-		for (j = 0; j < FFT_w; j++)  // ÁĞ
+	for (i = 0; i < FFT_h; i++)  // è¡Œ
+		for (j = 0; j < FFT_w; j++)  // åˆ—
 			FD[j + FFT_w * i] = gFD[i + FFT_h * j];
 
-	// ÑØË®Æ½·½Ïò½øĞĞ¿ìËÙ¸¶Á¢Ò¶±ä»»
+	// æ²¿æ°´å¹³æ–¹å‘è¿›è¡Œå¿«é€Ÿä»˜ç«‹å¶å˜æ¢
 	for (i = 0; i < FFT_h; i++)
 		IFFT(&FD[FFT_w * i], &TD[FFT_w * i], wp);
 
-	// ±£´æÖĞ¼ä±ä»»½á¹û
+	// ä¿å­˜ä¸­é—´å˜æ¢ç»“æœ
 	for (i = 0; i < FFT_h; i++)
 		for (j = 0; j < FFT_w; j++)
 			FD[i + FFT_h * j] = TD[j + FFT_w * i];
 
-	// ÑØ´¹Ö±·½Ïò½øĞĞ¿ìËÙ¸¶Á¢Ò¶±ä»»
+	// æ²¿å‚ç›´æ–¹å‘è¿›è¡Œå¿«é€Ÿä»˜ç«‹å¶å˜æ¢
 	for (i = 0; i < FFT_w; i++)
 		IFFT(&FD[i * FFT_h], &TD[i * FFT_h], hp);
 
-	//Îª·´±ä»»Í¼Ïñ·ÖÅäÄÚ´æ
+	//ä¸ºåå˜æ¢å›¾åƒåˆ†é…å†…å­˜
 	LONG size = 40 + 1024 + LineBytes * height;
 
 	lpDIB_IFT = (LPBITMAPINFO)malloc(size);
@@ -665,13 +665,13 @@ void IFFourier()
 		return;
 	memcpy(lpDIB_IFT, lpBitsInfo, size);
 
-	//Ö¸Ïò·´±ä»»Í¼ÏñÊı¾İÖ¸Õë
+	//æŒ‡å‘åå˜æ¢å›¾åƒæ•°æ®æŒ‡é’ˆ
 	BYTE* lpBits = (BYTE*)&lpDIB_IFT->bmiColors[256];
 	BYTE* pixel;
 	double temp;
-	for (i = 0; i < FFT_h; i++) // ĞĞ
+	for (i = 0; i < FFT_h; i++) // è¡Œ
 	{
-		for (j = 0; j < FFT_w; j++) // ÁĞ
+		for (j = 0; j < FFT_w; j++) // åˆ—
 		{
 			pixel = lpBits + LineBytes * (height - 1 - i) + j;
 			temp = (TD[j * FFT_h + i].real() / pow(-1, i + j));
@@ -683,58 +683,58 @@ void IFFourier()
 		}
 	}
 
-	// É¾³ıÁÙÊ±±äÁ¿
+	// åˆ é™¤ä¸´æ—¶å˜é‡
 	delete FD;
 	delete TD;
 	delete gFD;
 	gFD = NULL;
 }
 
-// Ä£°åº¯Êı
+// æ¨¡æ¿å‡½æ•°
 void Template(int* Array, float coef)
 {
-	// Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	// å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int w = lpBitsInfo->bmiHeader.biWidth;
 	int h = lpBitsInfo->bmiHeader.biHeight;
-	// Ã¿ĞĞµÄ×Ö½ÚÊı£¨±ØĞëÊÇ4µÄ±¶Êı£©
+	// æ¯è¡Œçš„å­—èŠ‚æ•°ï¼ˆå¿…é¡»æ˜¯4çš„å€æ•°ï¼‰
 	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
-	// Ö¸ÏòÔ­Í¼ÏñÊı¾İµÄÖ¸Õë
+	// æŒ‡å‘åŸå›¾åƒæ•°æ®çš„æŒ‡é’ˆ
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
-	// ÎªĞÂÍ¼Ïó·ÖÅäÄÚ´æ
+	// ä¸ºæ–°å›¾è±¡åˆ†é…å†…å­˜
 	BITMAPINFO* new_lpBitsInfo;
 	LONG size = sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD) + h * LineBytes;
 	if (NULL == (new_lpBitsInfo = (LPBITMAPINFO)malloc(size)))
 		return;
-	// ¸´ÖÆBMP
+	// å¤åˆ¶BMP
 	memcpy(new_lpBitsInfo, lpBitsInfo, size);
-	// ÕÒµ½ĞÂÍ¼ÏñÏóËØÆğÊ¼Î»ÖÃ
+	// æ‰¾åˆ°æ–°å›¾åƒè±¡ç´ èµ·å§‹ä½ç½®
 	BYTE* lpNewBits = (BYTE*)&new_lpBitsInfo->bmiColors[new_lpBitsInfo->bmiHeader.biClrUsed];
 
 	int i, j, k, l;
 	BYTE* pixel, * new_pixel;
 	float result;
 
-	// ĞĞ(³ıÈ¥±ßÔµ¼¸ĞĞ)
+	// è¡Œ(é™¤å»è¾¹ç¼˜å‡ è¡Œ)
 	for (i = 1; i < h - 1; i++)
 	{
-		// ÁĞ(³ıÈ¥±ßÔµ¼¸ÁĞ)
+		// åˆ—(é™¤å»è¾¹ç¼˜å‡ åˆ—)
 		for (j = 1; j < w - 1; j++)
 		{
-			// Ö¸ÏòĞÂÍ¼µÚiĞĞ£¬µÚj¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘æ–°å›¾ç¬¬iè¡Œï¼Œç¬¬jä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			new_pixel = lpNewBits + LineBytes * (h - 1 - i) + j;
 			result = 0;
-			// ¼ÆËã3x3Ä£°åÄÚÏñËØ»Ò¶ÈÖµµÄºÍ
+			// è®¡ç®—3x3æ¨¡æ¿å†…åƒç´ ç°åº¦å€¼çš„å’Œ
 			for (k = 0; k < 3; k++)
 			{
 				for (l = 0; l < 3; l++)
 				{
-					// Ö¸ÏòÔ­Í¼ÔÚÄ£°åÄÚÃ¿¸öÏñËØµãµÄ»Ò¶ÈÖµ£¬µÚi - 1 + kĞĞ£¬µÚj - 1 + l¸öÏóËØµÄÖ¸Õë
+					// æŒ‡å‘åŸå›¾åœ¨æ¨¡æ¿å†…æ¯ä¸ªåƒç´ ç‚¹çš„ç°åº¦å€¼ï¼Œç¬¬i - 1 + kè¡Œï¼Œç¬¬j - 1 + lä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 					pixel = lpBits + LineBytes * (h - i - k) + j - 1 + l;
-					// »Ò¶ÈÖµ³ËÉÏÄ£°åÏµÊıºóÀÛ¼Ó
+					// ç°åº¦å€¼ä¹˜ä¸Šæ¨¡æ¿ç³»æ•°åç´¯åŠ 
 					result += (*pixel) * Array[k * 3 + l];
 				}
 			}
-			// ³ËÉÏÏµÊı
+			// ä¹˜ä¸Šç³»æ•°
 			result *= coef;
 			if (result < 0)
 				*new_pixel = 0;
@@ -748,22 +748,22 @@ void Template(int* Array, float coef)
 	lpBitsInfo = new_lpBitsInfo;
 }
 
-// ¾ùÖµÂË²¨
+// å‡å€¼æ»¤æ³¢
 void AvgSmooth() {
-	int Array[9]; //3x3Ä£°å
-	//±ê×¼¾ùÖµÂË²¨
+	int Array[9]; //3x3æ¨¡æ¿
+	//æ ‡å‡†å‡å€¼æ»¤æ³¢
 	Array[0] = 1;	Array[1] = 1;	Array[2] = 1;
 	Array[3] = 1;	Array[4] = 1;	Array[5] = 1;
 	Array[6] = 1;	Array[7] = 1;	Array[8] = 1;
 	Template(Array, (float)1 / 9);
 }
 
-// »ñÈ¡ÖĞÖµ
+// è·å–ä¸­å€¼
 BYTE WINAPI GetMedianNum(BYTE* Array)
 {
 	int i, j;
 	BYTE temp;
-	// ÓÃÃ°Åİ·¨¶ÔÊı×é½øĞĞÅÅĞò
+	// ç”¨å†’æ³¡æ³•å¯¹æ•°ç»„è¿›è¡Œæ’åº
 	for (j = 0; j < 9 - 1; j++)
 	{
 		for (i = 0; i < 9 - j - 1; i++)
@@ -776,53 +776,53 @@ BYTE WINAPI GetMedianNum(BYTE* Array)
 			}
 		}
 	}
-	// ·µ»ØÖĞÖµ
+	// è¿”å›ä¸­å€¼
 	return Array[4];
 }
 
-// ÖĞÖµÂË²¨
+// ä¸­å€¼æ»¤æ³¢
 void MidSmooth()
 {
-	// Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	// å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int w = lpBitsInfo->bmiHeader.biWidth;
 	int h = lpBitsInfo->bmiHeader.biHeight;
-	// Ã¿ĞĞµÄ×Ö½ÚÊı£¨±ØĞëÊÇ4µÄ±¶Êı£©
+	// æ¯è¡Œçš„å­—èŠ‚æ•°ï¼ˆå¿…é¡»æ˜¯4çš„å€æ•°ï¼‰
 	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
-	// Ö¸ÏòÔ­Í¼ÏñÊı¾İµÄÖ¸Õë
+	// æŒ‡å‘åŸå›¾åƒæ•°æ®çš„æŒ‡é’ˆ
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
-	// ÎªĞÂÍ¼Ïó·ÖÅäÄÚ´æ
+	// ä¸ºæ–°å›¾è±¡åˆ†é…å†…å­˜
 	BITMAPINFO* new_lpBitsInfo;
 	LONG size = sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD) + h * LineBytes;
 	if (NULL == (new_lpBitsInfo = (LPBITMAPINFO)malloc(size)))
 		return;
-	// ¸´ÖÆBMP
+	// å¤åˆ¶BMP
 	memcpy(new_lpBitsInfo, lpBitsInfo, size);
-	// ÕÒµ½ĞÂÍ¼ÏñÏóËØÆğÊ¼Î»ÖÃ
+	// æ‰¾åˆ°æ–°å›¾åƒè±¡ç´ èµ·å§‹ä½ç½®
 	BYTE* lpNewBits = (BYTE*)&new_lpBitsInfo->bmiColors[new_lpBitsInfo->bmiHeader.biClrUsed];
 
 	int i, j, k, l;
 	BYTE* pixel, * new_pixel;
-	BYTE Value[9]; //3x3Ä£°å
-	// ĞĞ(³ıÈ¥±ßÔµ¼¸ĞĞ)
+	BYTE Value[9]; //3x3æ¨¡æ¿
+	// è¡Œ(é™¤å»è¾¹ç¼˜å‡ è¡Œ)
 	for (i = 1; i < h - 1; i++)
 	{
-		// ÁĞ(³ıÈ¥±ßÔµ¼¸ÁĞ)
+		// åˆ—(é™¤å»è¾¹ç¼˜å‡ åˆ—)
 		for (j = 1; j < w - 1; j++)
 		{
-			// Ö¸ÏòĞÂÍ¼µÚiĞĞ£¬µÚj¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘æ–°å›¾ç¬¬iè¡Œï¼Œç¬¬jä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			new_pixel = lpNewBits + LineBytes * (h - 1 - i) + j;
-			// ¼ÆËã 3x3Ä£°åÄÚÏñËØµÄ»Ò¶ÈÖµ
+			// è®¡ç®— 3x3æ¨¡æ¿å†…åƒç´ çš„ç°åº¦å€¼
 			for (k = 0; k < 3; k++)
 			{
 				for (l = 0; l < 3; l++)
 				{
-					// Ö¸ÏòÔ­Í¼µÚi - 1 + kĞĞ£¬µÚj - 1 + l¸öÏóËØµÄÖ¸Õë
+					// æŒ‡å‘åŸå›¾ç¬¬i - 1 + kè¡Œï¼Œç¬¬j - 1 + lä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 					pixel = lpBits + LineBytes * (h - i - k) + j - 1 + l;
-					// ±£´æÏóËØÖµ
+					// ä¿å­˜è±¡ç´ å€¼
 					Value[k * 3 + l] = *pixel;
 				}
 			}
-			// »ñÈ¡ÖĞÖµ
+			// è·å–ä¸­å€¼
 			*new_pixel = GetMedianNum(Value);
 		}
 	}
@@ -830,45 +830,45 @@ void MidSmooth()
 	lpBitsInfo = new_lpBitsInfo;
 }
 
-// À­ÆÕÀ­Ë¹Èñ»¯
+// æ‹‰æ™®æ‹‰æ–¯é”åŒ–
 void RaplasSharp()
 {
 	int Array[9]; 
 
-	//À­ÆÕÀ­Ë¹Èñ»¯
+	//æ‹‰æ™®æ‹‰æ–¯é”åŒ–
 	Array[0] = -1;	Array[1] = -1;	Array[2] = -1;
 	Array[3] = -1;	Array[4] = 9;	Array[5] = -1;
 	Array[6] = -1;	Array[7] = -1;	Array[8] = -1;
 	Template(Array, (float)1);
 }
 
-// Ìİ¶ÈÈñ»¯
+// æ¢¯åº¦é”åŒ–
 void GradSharp()
 {
-	// Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	// å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int w = lpBitsInfo->bmiHeader.biWidth;
 	int h = lpBitsInfo->bmiHeader.biHeight;
-	// Ã¿ĞĞµÄ×Ö½ÚÊı£¨±ØĞëÊÇ4µÄ±¶Êı£©
+	// æ¯è¡Œçš„å­—èŠ‚æ•°ï¼ˆå¿…é¡»æ˜¯4çš„å€æ•°ï¼‰
 	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
-	// Ö¸ÏòÔ­Í¼ÏñÊı¾İµÄÖ¸Õë
+	// æŒ‡å‘åŸå›¾åƒæ•°æ®çš„æŒ‡é’ˆ
 	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
-	// Ö¸ÏòÔ´Í¼ÏñµÄÖ¸Õë
+	// æŒ‡å‘æºå›¾åƒçš„æŒ‡é’ˆ
 	BYTE* lpSrc, * lpSrc1, * lpSrc2;
 	int i, j;
 	BYTE temp;
-	// Ã¿ĞĞ
+	// æ¯è¡Œ
 	for (i = 0; i < h - 1; i++)
 	{
-		// Ã¿ÁĞ
+		// æ¯åˆ—
 		for (j = 0; j < w - 1; j++)
 		{
-			// Ö¸ÏòÍ¼ÏñµÚiĞĞ£¬µÚj¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘å›¾åƒç¬¬iè¡Œï¼Œç¬¬jä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			lpSrc = (unsigned char*)lpBits + LineBytes * (h - 1 - i) + j;
-			// Ö¸ÏòÍ¼ÏñµÚi+1ĞĞ£¬µÚj¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘å›¾åƒç¬¬i+1è¡Œï¼Œç¬¬jä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			lpSrc1 = (unsigned char*)lpBits + LineBytes * (h - 2 - i) + j;
-			// Ö¸ÏòÍ¼ÏñµÚiĞĞ£¬µÚj+1¸öÏóËØµÄÖ¸Õë
+			// æŒ‡å‘å›¾åƒç¬¬iè¡Œï¼Œç¬¬j+1ä¸ªè±¡ç´ çš„æŒ‡é’ˆ
 			lpSrc2 = (unsigned char*)lpBits + LineBytes * (h - 1 - i) + j + 1;
-			//Ìİ¶ÈËã×Ó
+			//æ¢¯åº¦ç®—å­
 			temp = abs((*lpSrc) - (*lpSrc1)) + abs((*lpSrc) - (*lpSrc2));
 			if (temp > 255)
 				*lpSrc = 255;
@@ -878,10 +878,15 @@ void GradSharp()
 	}
 }
 
-// ÀíÏëÂË²¨£ºD>0µÍÍ¨£¬D<0¸ßÍ¨
+// ç†æƒ³æ»¤æ³¢ï¼šD>0ä½é€šï¼ŒD<0é«˜é€š
 void FFT_Filter(int D)
 {
-	//Í¼ÏñµÄ¿í¶ÈºÍ¸ß¶È
+	if (!gFD) {
+		AfxMessageBox(L"gFD==NULLï¼šè¯·å…ˆæ‰§è¡Œ FFTï¼ˆç”Ÿæˆé¢‘åŸŸæ•°æ®ï¼‰å†è¿›è¡Œç†æƒ³æ»¤æ³¢");
+		return;
+	}
+
+	//å›¾åƒçš„å®½åº¦å’Œé«˜åº¦
 	int width = lpBitsInfo->bmiHeader.biWidth;
 	int height = lpBitsInfo->bmiHeader.biHeight;
 	int FFT_w = 1;
@@ -891,12 +896,12 @@ void FFT_Filter(int D)
 	while (FFT_h * 2 <= height)
 		FFT_h *= 2;
 
-	//±¸·İÔ­Ê¼ÆµÓòÊı¾İ
+	//å¤‡ä»½åŸå§‹é¢‘åŸŸæ•°æ®
 	complex<double>* origin_FD = new complex<double>[FFT_w * FFT_h];
 	for (int n = 0; n < FFT_w * FFT_h; n++)
 		origin_FD[n] = gFD[n];
 
-	//ÆµÂÊÂË²¨
+	//é¢‘ç‡æ»¤æ³¢
 	int i, j;
 	double dis;
 	for (i = 0; i < FFT_h; i++)
@@ -905,13 +910,13 @@ void FFT_Filter(int D)
 		{
 			dis = sqrt((i - FFT_h / 2) * (i - FFT_h / 2) + (j - FFT_w / 2) * (j - FFT_w / 2) + 1);
 
-			//ÀíÏëÂË²¨
-			if (D > 0) //µÍÍ¨
+			//ç†æƒ³æ»¤æ³¢
+			if (D > 0) //ä½é€š
 			{
 				if (dis > D)
 					gFD[i * FFT_h + j] = 0;
 			}
-			else { //¸ßÍ¨
+			else { //é«˜é€š
 				if (dis <= -D)
 					gFD[i * FFT_h + j] = 0;
 			}
@@ -935,10 +940,10 @@ void FFT_Filter(int D)
 		}
 	}
 
-	//¿ìËÙ¸µÀïÒ¶·´±ä»»
+	//å¿«é€Ÿå‚…é‡Œå¶åå˜æ¢
 	IFFourier();
 
-	//»Ö¸´µ½Ô­Ê¼ÆµÓòÊı¾İ
+	//æ¢å¤åˆ°åŸå§‹é¢‘åŸŸæ•°æ®
 	delete gFD;
 	gFD = origin_FD;
 }
