@@ -67,3 +67,6 @@ void MidSmooth();
 
 // 拉普拉斯锐化
 void RaplasSharp();
+
+// 梯度锐化
+void GradSharp();

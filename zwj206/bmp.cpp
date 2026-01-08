@@ -841,3 +841,39 @@ void RaplasSharp()
 	Array[6] = -1;	Array[7] = -1;	Array[8] = -1;
 	Template(Array, (float)1);
 }
+
+// 梯度锐化
+void GradSharp()
+{
+	// 图像的宽度和高度
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	// 每行的字节数（必须是4的倍数）
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	// 指向原图像数据的指针
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+	// 指向源图像的指针
+	BYTE* lpSrc, * lpSrc1, * lpSrc2;
+	int i, j;
+	BYTE temp;
+	// 每行
+	for (i = 0; i < h - 1; i++)
+	{
+		// 每列
+		for (j = 0; j < w - 1; j++)
+		{
+			// 指向图像第i行，第j个象素的指针
+			lpSrc = (unsigned char*)lpBits + LineBytes * (h - 1 - i) + j;
+			// 指向图像第i+1行，第j个象素的指针
+			lpSrc1 = (unsigned char*)lpBits + LineBytes * (h - 2 - i) + j;
+			// 指向图像第i行，第j+1个象素的指针
+			lpSrc2 = (unsigned char*)lpBits + LineBytes * (h - 1 - i) + j + 1;
+			//梯度算子
+			temp = abs((*lpSrc) - (*lpSrc1)) + abs((*lpSrc) - (*lpSrc2));
+			if (temp > 255)
+				*lpSrc = 255;
+			else
+				*lpSrc = temp;
+		}
+	}
+}

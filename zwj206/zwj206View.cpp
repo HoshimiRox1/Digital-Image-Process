@@ -56,6 +56,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_MIDSMOOTH, &Czwj206View::OnUpdateMidsmooth)
 	ON_COMMAND(ID_RAPLASSHARP, &Czwj206View::OnRaplassharp)
 	ON_UPDATE_COMMAND_UI(ID_RAPLASSHARP, &Czwj206View::OnUpdateRaplassharp)
+	ON_COMMAND(ID_GRADSHARP, &Czwj206View::OnGradsharp)
+	ON_UPDATE_COMMAND_UI(ID_GRADSHARP, &Czwj206View::OnUpdateGradsharp)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -386,6 +388,20 @@ void Czwj206View::OnRaplassharp()
 }
 
 void Czwj206View::OnUpdateRaplassharp(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+}
+
+void GradSharp();
+void Czwj206View::OnGradsharp()
+{
+	// TODO: 在此添加命令处理程序代码
+	GradSharp();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateGradsharp(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
