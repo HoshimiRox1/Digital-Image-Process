@@ -209,3 +209,34 @@ void LineTrans(float a, float b)
 	}
 }
 
+void Equalize()
+{
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+
+	int i, j;
+	BYTE* pixel;
+	int temp;
+	BYTE Map[256];
+	Histogram();//全局的直方图
+
+	for (i = 0; i < 256; i++)
+	{
+		temp = 0;
+		for (j = 0; j <= i; j++)
+		{
+			temp += H[j];
+		}
+		Map[i] = (BYTE)(temp * 255 / (w * h) + 0.5);
+	}
+	for (i = 0; i < h; i++)
+	{
+		for (j = 0; j < w; j++)
+		{
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			*pixel = Map[*pixel];
+		}
+	}
+}

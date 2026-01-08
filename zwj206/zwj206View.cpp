@@ -40,6 +40,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_HISTOGRAM, &Czwj206View::OnUpdateHistogram)
 	ON_COMMAND(ID_LINETRANS, &Czwj206View::OnLinetrans)
 	ON_UPDATE_COMMAND_UI(ID_LINETRANS, &Czwj206View::OnUpdateLinetrans)
+	ON_COMMAND(ID_EQUALIZE, &Czwj206View::OnEqualize)
+	ON_UPDATE_COMMAND_UI(ID_EQUALIZE, &Czwj206View::OnUpdateEqualize)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -240,6 +242,20 @@ void Czwj206View::OnLinetrans()
 }
 
 void Czwj206View::OnUpdateLinetrans(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray());
+}
+
+void Equalize();
+void Czwj206View::OnEqualize()
+{
+	// TODO: 在此添加命令处理程序代码
+	Equalize();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateEqualize(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray());

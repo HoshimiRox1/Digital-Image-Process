@@ -23,6 +23,9 @@ void Histogram();
 // 线性点运算
 void LineTrans(float a,float b);
 
+// 图像均衡变换
+void Equalize();
+
 // 计算256灰度直方图
 void ComputeHistogram(int hist[256]);
 

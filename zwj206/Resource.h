@@ -23,6 +23,7 @@
 #define ID_OPEN_WITH                    137
 #define ID_DUMMY_COMPILE                138
 #define ID_CLASS_ADD_MEMBER_FUNCTION    139
+#define ID_EQUALIZE                     139
 #define ID_CLASS_ADD_MEMBER_VARIABLE    140
 #define ID_CLASS_DEFINITION             141
 #define ID_CLASS_PROPERTIES             142
@@ -93,15 +94,15 @@
 #define ID_BUTTON32774                  32774
 #define ID_TOGREY                       32774
 #define ID_HISTOGRAM                    32779
-#define ID_BUTTON32782                  32782
 #define ID_LINETRANS                    32782
+#define ID_BUTTON32784                  32784
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32783
+#define _APS_NEXT_COMMAND_VALUE         32785
 #define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
