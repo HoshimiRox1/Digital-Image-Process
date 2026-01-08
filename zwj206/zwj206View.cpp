@@ -308,7 +308,7 @@ void Czwj206View::OnIft()
 void Czwj206View::OnUpdateIft(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+	pCmdUI->Enable(lpDIB_FT != NULL && FD_Available());
 }
 
 BOOL is_gFD_OK();
