@@ -70,6 +70,8 @@ public:
 	afx_msg void OnUpdateRaplassharp(CCmdUI* pCmdUI);
 	afx_msg void OnGradsharp();
 	afx_msg void OnUpdateGradsharp(CCmdUI* pCmdUI);
+	afx_msg void OnIdealfilter();
+	afx_msg void OnUpdateIdealfilter(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本

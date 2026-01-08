@@ -66,6 +66,9 @@
     <ClInclude Include="CLineTransDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Param.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="zwj206.cpp">
@@ -105,6 +108,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CLineTransDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Param.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

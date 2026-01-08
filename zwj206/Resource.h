@@ -2,6 +2,8 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 zwj206.rc 使用
 //
+#define ID_CANCEL_2                     2
+#define ID_CANCEL_3                     2
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_POPUP_EDIT                  119
@@ -87,10 +89,12 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_DIALOG1                     312
 #define IDD_LineTransDlg                314
-#define IDCANCEL                        1000
+#define IDD_Param                       316
 #define IDC_EDIT_A                      1003
 #define IDC_EDITB                       1004
 #define IDC_EDIT_B                      1004
+#define IDC_EDIT1                       1005
+#define ID_CANCEL_4                     1006
 #define ID_BUTTON32774                  32774
 #define ID_TOGREY                       32774
 #define ID_HISTOGRAM                    32779
@@ -102,16 +106,16 @@
 #define ID_AVGSMOOTH                    32799
 #define ID_MIDSMOOTH                    32802
 #define ID_RAPLASSHARP                  32803
-#define ID_BUTTON32804                  32804
 #define ID_GRADSHARP                    32804
+#define ID_IDEALFILTER                  32805
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32805
-#define _APS_NEXT_CONTROL_VALUE         1005
+#define _APS_NEXT_RESOURCE_VALUE        318
+#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

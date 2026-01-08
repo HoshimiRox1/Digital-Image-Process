@@ -15,7 +15,7 @@ complex<double>* gFD = NULL;
 
 // 加载图像文件
 BOOL LoadBmpFile(const char* BmpFileName) 
-{
+{	
 	FILE* fp;
 	if (NULL == (fp = fopen(BmpFileName, "rb")))
 		return FALSE;
@@ -876,4 +876,69 @@ void GradSharp()
 				*lpSrc = temp;
 		}
 	}
+}
+
+// 理想滤波：D>0低通，D<0高通
+void FFT_Filter(int D)
+{
+	//图像的宽度和高度
+	int width = lpBitsInfo->bmiHeader.biWidth;
+	int height = lpBitsInfo->bmiHeader.biHeight;
+	int FFT_w = 1;
+	while (FFT_w * 2 <= width)
+		FFT_w *= 2;
+	int FFT_h = 1;
+	while (FFT_h * 2 <= height)
+		FFT_h *= 2;
+
+	//备份原始频域数据
+	complex<double>* origin_FD = new complex<double>[FFT_w * FFT_h];
+	for (int n = 0; n < FFT_w * FFT_h; n++)
+		origin_FD[n] = gFD[n];
+
+	//频率滤波
+	int i, j;
+	double dis;
+	for (i = 0; i < FFT_h; i++)
+	{
+		for (j = 0; j < FFT_w; j++)
+		{
+			dis = sqrt((i - FFT_h / 2) * (i - FFT_h / 2) + (j - FFT_w / 2) * (j - FFT_w / 2) + 1);
+
+			//理想滤波
+			if (D > 0) //低通
+			{
+				if (dis > D)
+					gFD[i * FFT_h + j] = 0;
+			}
+			else { //高通
+				if (dis <= -D)
+					gFD[i * FFT_h + j] = 0;
+			}
+		}
+	}
+
+	int LineBytes = (FFT_w * lpDIB_FT->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpDIB_FT->bmiColors[lpDIB_FT->bmiHeader.biClrUsed];
+	double temp;
+	BYTE* pixel;
+	for (i = 0; i < FFT_h; i++)
+	{
+		for (j = 0; j < FFT_w; j++)
+		{
+			temp = sqrt(gFD[j * FFT_h + i].real() * gFD[j * FFT_h + i].real() +
+				gFD[j * FFT_h + i].imag() * gFD[j * FFT_h + i].imag()) * 2000;
+			if (temp > 255)
+				temp = 255;
+			pixel = lpBits + LineBytes * (height - 1 - i) + j;
+			*pixel = (BYTE)(temp);
+		}
+	}
+
+	//快速傅里叶反变换
+	IFFourier();
+
+	//恢复到原始频域数据
+	delete gFD;
+	gFD = origin_FD;
 }

@@ -15,6 +15,7 @@
 #include "zwj206View.h"
 #include "CHistogramDlg.h"
 #include "CLineTransDlg.h"
+#include "param.h"
 
 
 #ifdef _DEBUG
@@ -58,6 +59,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_RAPLASSHARP, &Czwj206View::OnUpdateRaplassharp)
 	ON_COMMAND(ID_GRADSHARP, &Czwj206View::OnGradsharp)
 	ON_UPDATE_COMMAND_UI(ID_GRADSHARP, &Czwj206View::OnUpdateGradsharp)
+	ON_COMMAND(ID_IDEALFILTER, &Czwj206View::OnIdealfilter)
+	ON_UPDATE_COMMAND_UI(ID_IDEALFILTER, &Czwj206View::OnUpdateIdealfilter)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -402,6 +405,22 @@ void Czwj206View::OnGradsharp()
 }
 
 void Czwj206View::OnUpdateGradsharp(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+}
+
+void FFT_Filter(int D);
+void Czwj206View::OnIdealfilter()
+{
+	// TODO: 在此添加命令处理程序代码
+	Param dlg;
+	if (IDOK == dlg.DoModal())
+		FFT_Filter(dlg.m_nDis); //建议使用对话框输入截止半径
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateIdealfilter(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());

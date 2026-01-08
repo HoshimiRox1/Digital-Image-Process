@@ -70,3 +70,6 @@ void RaplasSharp();
 
 // 梯度锐化
 void GradSharp();
+
+// 理想滤波：D>0低通，D<0高通
+void FFT_Filter(int D)
