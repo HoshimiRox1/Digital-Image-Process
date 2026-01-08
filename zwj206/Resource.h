@@ -85,18 +85,24 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDD_DIALOG1                     312
+#define IDD_LineTransDlg                314
 #define IDCANCEL                        1000
+#define IDC_EDIT_A                      1003
+#define IDC_EDITB                       1004
+#define IDC_EDIT_B                      1004
 #define ID_BUTTON32774                  32774
 #define ID_TOGREY                       32774
 #define ID_HISTOGRAM                    32779
+#define ID_BUTTON32782                  32782
+#define ID_LINETRANS                    32782
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_COMMAND_VALUE         32783
+#define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

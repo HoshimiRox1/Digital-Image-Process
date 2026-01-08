@@ -50,6 +50,8 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnHistogram();
 	afx_msg void OnUpdateHistogram(CCmdUI* pCmdUI);
+	afx_msg void OnLinetrans();
+	afx_msg void OnUpdateLinetrans(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本

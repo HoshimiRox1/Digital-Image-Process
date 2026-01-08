@@ -182,3 +182,30 @@ void Histogram() {
 		}
 	}
 }
+
+// 线性点运算
+void LineTrans(float a, float b)
+{
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+	float temp;
+	BYTE* pixel;
+	int i, j;
+	for (i = 0; i < h; i++)
+	{
+		for (j = 0; j < w; j++)
+		{
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			temp = a * (*pixel) + b;
+			if (temp < 0)
+				*pixel = 0;
+			else if (temp > 255)
+				*pixel = 255;
+			else
+				*pixel = (BYTE)(temp + 0.5);
+		}
+	}
+}
+

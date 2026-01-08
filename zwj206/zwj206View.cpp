@@ -14,6 +14,8 @@
 #include "zwj206Doc.h"
 #include "zwj206View.h"
 #include "CHistogramDlg.h"
+#include "CLineTransDlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +38,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_HISTOGRAM, &Czwj206View::OnHistogram)
 	ON_UPDATE_COMMAND_UI(ID_HISTOGRAM, &Czwj206View::OnUpdateHistogram)
+	ON_COMMAND(ID_LINETRANS, &Czwj206View::OnLinetrans)
+	ON_UPDATE_COMMAND_UI(ID_LINETRANS, &Czwj206View::OnUpdateLinetrans)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -226,4 +230,17 @@ void Czwj206View::OnUpdateHistogram(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray()); 
+}
+
+void Czwj206View::OnLinetrans()
+{
+	// TODO: 在此添加命令处理程序代码
+	CLineTransDlg dlg;
+	dlg.DoModal();
+}
+
+void Czwj206View::OnUpdateLinetrans(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray());
 }

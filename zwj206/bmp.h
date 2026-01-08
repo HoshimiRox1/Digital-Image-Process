@@ -20,6 +20,9 @@ void pixel(int i, int j, char* str);
 // 直方图数组
 void Histogram();
 
+// 线性点运算
+void LineTrans(float a,float b);
+
 // 计算256灰度直方图
 void ComputeHistogram(int hist[256]);
 
