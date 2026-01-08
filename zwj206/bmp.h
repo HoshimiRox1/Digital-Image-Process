@@ -64,3 +64,6 @@ BYTE WINAPI GetMedianNum(BYTE* Array);
 
 // 中值滤波
 void MidSmooth();
+
+// 拉普拉斯锐化
+void RaplasSharp();

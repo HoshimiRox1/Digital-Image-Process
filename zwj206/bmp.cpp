@@ -829,3 +829,15 @@ void MidSmooth()
 	free(lpBitsInfo);
 	lpBitsInfo = new_lpBitsInfo;
 }
+
+// 拉普拉斯锐化
+void RaplasSharp()
+{
+	int Array[9]; 
+
+	//拉普拉斯锐化
+	Array[0] = -1;	Array[1] = -1;	Array[2] = -1;
+	Array[3] = -1;	Array[4] = 9;	Array[5] = -1;
+	Array[6] = -1;	Array[7] = -1;	Array[8] = -1;
+	Template(Array, (float)1);
+}
