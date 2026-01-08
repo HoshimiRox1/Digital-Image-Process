@@ -6,9 +6,12 @@
 #include <string>
 
 using namespace std;
-// 本MFC使用的C++版本是 C++23preview，不是这个版本编译会报错
+// 本MFC使用的C++版本是 C++23preview，不是这个版本编译会报错（可能吧）
 
 LPBITMAPINFO lpBitsInfo = nullptr;
+BITMAPINFO* lpDIB_FT;
+BITMAPINFO* lpDIB_IFT;
+complex<double>* gFD = NULL;
 
 // 加载图像文件
 BOOL LoadBmpFile(const char* BmpFileName) 
@@ -239,4 +242,168 @@ void Equalize()
 			*pixel = Map[*pixel];
 		}
 	}
+}
+
+// 傅里叶变换
+void FT(complex<double>* TD, complex<double>* FD, int m)
+{
+	int x, u;
+	double angle;
+	for (u = 0; u < m; u++)
+	{
+		FD[u] = 0;
+		for (x = 0; x < m; x++)
+		{
+			angle = -2 * PI * u * x / m;
+			FD[u] += TD[x] * complex<double>(cos(angle), sin(angle));
+		}
+		FD[u] /= m;
+	}
+}
+
+// 反变换
+void IFT(complex<double>* FD, complex<double>* TD, int m)
+{
+	int x, u;
+	double angle;
+	for (x = 0; x < m; x++)
+	{
+		TD[x] = 0;
+		for (u = 0; u < m; u++)
+		{
+			angle = 2 * PI * u * x / m;
+			TD[x] += FD[u] * complex<double>(cos(angle), sin(angle));
+		}
+	}
+}
+
+// 傅里叶变换显示
+void Fourier() {
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+
+	// 初始化
+	complex<double>* TD = new complex<double>[w * h];
+	complex<double>* FD = new complex<double>[w * h];
+
+	int i, j;
+	BYTE* pixel;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			// 指向像素点(i,j)的指针
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			TD[w * i + j] = complex<double>(*pixel * pow(-1, i + j), 0);//TD的初始化操作
+		}
+	}
+	// 一次傅里叶变换，沿行方向做傅里叶变换
+	for (i = 0; i < h; i++) {
+		FT(&TD[i * w], &FD[i * w], w);
+	}
+
+	// 将FD转置
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			TD[h * j + i] = FD[w * i + j];
+		}
+	}
+
+	// 二次傅里叶变换
+	for (i = 0; i < w; i++) {
+		FT(&TD[i * h], &FD[i * h], h);
+	}
+
+	// 结果可视化
+	LONG size = 40 + 1024 + LineBytes * h;
+	lpDIB_FT = (BITMAPINFO*)malloc(size);
+	if (NULL == lpDIB_FT)
+		return;
+	memcpy(lpDIB_FT, lpBitsInfo, size);
+
+	lpBits = (BYTE*)&lpDIB_FT->bmiColors[lpDIB_FT->bmiHeader.biClrUsed];
+
+	double temp;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			// 指向像素点(i,j)的指针
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			temp = sqrt(FD[j * h + i].real() * FD[j * h + i].real() +
+				FD[j * h + i].imag() * FD[j * h + i].imag()) * 2000;
+			if (temp > 255)
+				temp = 255;
+			*pixel = (BYTE)(temp);
+		}
+	}
+
+	delete TD;
+	gFD = FD;
+}
+
+BOOL is_gFD_OK()
+{
+	return(gFD != NULL);
+}
+
+// 傅里叶反变换显示
+void IFourier() {
+
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+
+	// 初始化
+	complex<double>* TD = new complex<double>[w * h];
+	complex<double>* FD = new complex<double>[w * h];
+
+	// 转置回去
+	int i, j;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			FD[w * i + j] = gFD[i + h * j];
+		}
+	}
+	// 一次傅里叶反变换
+	for (i = 0; i < h; i++) {
+		IFT(&FD[i * w], &TD[i * w], w);
+	}
+
+	// 将TD转置
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			FD[h * j + i] = TD[w * i + j];
+		}
+	}
+
+	// 二次傅里叶反变换
+	for (i = 0; i < w; i++) {
+		IFT(&FD[i * h], &TD[i * h], h);
+	}
+
+	// 计算结果可视化
+	DWORD size = 40 + 1024 + LineBytes * h;
+	lpDIB_IFT = (BITMAPINFO*)malloc(size);
+	if (NULL == lpDIB_IFT)return;
+	memcpy(lpDIB_IFT, lpBitsInfo, size);
+
+	lpBits = (BYTE*)&lpDIB_IFT->bmiColors[lpDIB_IFT->bmiHeader.biClrUsed];
+
+	BYTE* pixel;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			// 指向像素点(i,j)的指针
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			*pixel = (BYTE)(TD[j * h + i].real() / pow(-1, i + j));
+		}
+	}
+
+	delete TD;
+	delete FD;
+	delete gFD;
+	gFD = NULL;
+}
+
+BOOL FD_Available() {
+	return (gFD != NULL);
 }

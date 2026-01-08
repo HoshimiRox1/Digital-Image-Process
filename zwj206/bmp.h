@@ -2,6 +2,11 @@
 
 #include <Windows.h>
 #include <vector>
+#include <complex>
+
+#define PI 3.1415926535
+
+using namespace std;
 
 extern LPBITMAPINFO lpBitsInfo;
 
@@ -26,8 +31,16 @@ void LineTrans(float a,float b);
 // 图像均衡变换
 void Equalize();
 
-// 计算256灰度直方图
-void ComputeHistogram(int hist[256]);
+// 傅里叶变换
+void FT(complex<double>* TD, complex<double>* FD, int m);
 
-// 绘制直方图
-void DrawHistogram(HDC hdc, RECT rc);
+// 反变换
+void IFT(complex<double>* FD, complex<double>* TD, int m);
+
+// 傅里叶变换显示
+void Fourier();
+BOOL is_gFD_OK();
+
+// 傅里叶反变换显示
+void IFourier();
+BOOL FD_Available();

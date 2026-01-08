@@ -42,6 +42,10 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_LINETRANS, &Czwj206View::OnUpdateLinetrans)
 	ON_COMMAND(ID_EQUALIZE, &Czwj206View::OnEqualize)
 	ON_UPDATE_COMMAND_UI(ID_EQUALIZE, &Czwj206View::OnUpdateEqualize)
+	ON_COMMAND(ID_FT, &Czwj206View::OnFt)
+	ON_UPDATE_COMMAND_UI(ID_FT, &Czwj206View::OnUpdateFt)
+	ON_COMMAND(ID_IFT, &Czwj206View::OnIft)
+	ON_UPDATE_COMMAND_UI(ID_IFT, &Czwj206View::OnUpdateIft)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -65,6 +69,9 @@ BOOL Czwj206View::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 // Czwj206View 绘图
+extern BITMAPINFO* lpBitsInfo;
+extern BITMAPINFO* lpDIB_FT;
+extern BITMAPINFO* lpDIB_IFT;
 
 void Czwj206View::OnDraw(CDC* pDC)
 {
@@ -106,6 +113,33 @@ void Czwj206View::OnDraw(CDC* pDC)
         DIB_RGB_COLORS,        // 颜色使用 RGB 模式
         SRCCOPY                // 复制源图像
     );
+
+	// 傅里叶有关逻辑
+	lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+	StretchDIBits(pDC->GetSafeHdc(),
+		0, 0, lpBitsInfo->bmiHeader.biWidth, lpBitsInfo->bmiHeader.biHeight,//图像的宽度高度，目标区域的矩形框
+		0, 0, lpBitsInfo->bmiHeader.biWidth, lpBitsInfo->bmiHeader.biHeight,//原图的宽度和高度
+		lpBits, lpBitsInfo,
+		DIB_RGB_COLORS,
+		SRCCOPY);
+
+	if (lpDIB_FT) {
+		lpBits = (BYTE*)&lpDIB_FT->bmiColors[lpDIB_FT->bmiHeader.biClrUsed];
+		StretchDIBits(pDC->GetSafeHdc(),
+			600, 0, lpDIB_FT->bmiHeader.biWidth, lpDIB_FT->bmiHeader.biHeight,
+			0, 0, lpDIB_FT->bmiHeader.biWidth, lpDIB_FT->bmiHeader.biHeight,
+			lpBits, lpDIB_FT,
+			DIB_RGB_COLORS, SRCCOPY);
+	}
+
+	if (lpDIB_IFT) {
+		lpBits = (BYTE*)&lpDIB_IFT->bmiColors[lpDIB_IFT->bmiHeader.biClrUsed];
+		StretchDIBits(pDC->GetSafeHdc(),
+			0, 600, lpDIB_IFT->bmiHeader.biWidth, lpDIB_IFT->bmiHeader.biHeight,
+			0, 0, lpDIB_IFT->bmiHeader.biWidth, lpDIB_IFT->bmiHeader.biHeight,
+			lpBits, lpDIB_IFT,
+			DIB_RGB_COLORS, SRCCOPY);
+	}
 }
 
 void Czwj206View::OnInitialUpdate()
@@ -259,4 +293,34 @@ void Czwj206View::OnUpdateEqualize(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray());
+}
+
+void Fourier();
+BOOL FD_Available();
+
+void Czwj206View::OnFt()
+{
+	// TODO: 在此添加命令处理程序代码
+	Fourier();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateFt(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+}
+
+void IFourier();
+void Czwj206View::OnIft()
+{
+	// TODO: 在此添加命令处理程序代码
+	IFourier();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateIft(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
 }

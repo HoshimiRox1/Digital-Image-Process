@@ -54,6 +54,10 @@ public:
 	afx_msg void OnUpdateLinetrans(CCmdUI* pCmdUI);
 	afx_msg void OnEqualize();
 	afx_msg void OnUpdateEqualize(CCmdUI* pCmdUI);
+	afx_msg void OnFt();
+	afx_msg void OnUpdateFt(CCmdUI* pCmdUI);
+	afx_msg void OnIft();
+	afx_msg void OnUpdateIft(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本
