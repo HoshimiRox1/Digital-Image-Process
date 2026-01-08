@@ -881,11 +881,6 @@ void GradSharp()
 // 理想滤波：D>0低通，D<0高通
 void FFT_Filter(int D)
 {
-	if (!gFD) {
-		AfxMessageBox(L"gFD==NULL：请先执行 FFT（生成频域数据）再进行理想滤波");
-		return;
-	}
-
 	//图像的宽度和高度
 	int width = lpBitsInfo->bmiHeader.biWidth;
 	int height = lpBitsInfo->bmiHeader.biHeight;
@@ -936,6 +931,68 @@ void FFT_Filter(int D)
 			if (temp > 255)
 				temp = 255;
 			pixel = lpBits + LineBytes * (height - 1 - i) + j;
+			*pixel = (BYTE)(temp);
+		}
+	}
+
+	//快速傅里叶反变换
+	IFFourier();
+
+	//恢复到原始频域数据
+	delete gFD;
+	gFD = origin_FD;
+}
+
+//巴特沃斯低通(D>0)、高通(D<0)滤波，阶数n=1
+void Butterworth_Filter_FFT(int D)
+{
+	//图像的宽度和高度
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+
+	//备份原始频域数据
+	complex<double>* origin_FD = new complex<double>[w * h];
+	memcpy(origin_FD, gFD, w * h * sizeof(complex<double>));
+
+	//频率滤波
+	int i, j;
+	double dis;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			dis = sqrt((i - h / 2) * (i - h / 2) + (j - w / 2) * (j - w / 2));
+
+			if (D > 0) {	//低通
+				//if (dis > D) 
+					// n取2效果最好
+				gFD[i * h + j] = gFD[i * h + j] / (1.0 + pow(dis / D, 4)); //低通，截断高频
+			}
+			else { //高通
+				//if (dis <= -D) 
+				gFD[i * h + j] = gFD[i * h + j] / (1.0 + pow(D / dis, 4)); //高通，截断低频
+			}
+		}
+	}
+
+	//生成新的频谱图像
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	LONG size = 40 + 1024 + LineBytes * h;
+	lpDIB_FT = (LPBITMAPINFO)malloc(size);
+	if (lpDIB_FT == NULL)
+		return;
+	memcpy(lpDIB_FT, lpBitsInfo, size);
+	BYTE* lpBits = (BYTE*)&lpDIB_FT->bmiColors[lpDIB_FT->bmiHeader.biClrUsed];
+
+	double temp;
+	BYTE* pixel;
+	for (i = 0; i < h; i++)
+	{
+		for (j = 0; j < w; j++)
+		{
+			temp = sqrt(gFD[j * h + i].real() * gFD[j * h + i].real() +
+				gFD[j * h + i].imag() * gFD[j * h + i].imag()) * 2000;
+			if (temp > 255)
+				temp = 255;
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
 			*pixel = (BYTE)(temp);
 		}
 	}

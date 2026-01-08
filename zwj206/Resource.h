@@ -108,13 +108,15 @@
 #define ID_RAPLASSHARP                  32803
 #define ID_GRADSHARP                    32804
 #define ID_IDEALFILTER                  32805
+#define ID_BUTTON32808                  32808
+#define ID_BUTTERWORTH                  32808
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        318
-#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_COMMAND_VALUE         32809
 #define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

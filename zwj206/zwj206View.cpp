@@ -61,6 +61,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_GRADSHARP, &Czwj206View::OnUpdateGradsharp)
 	ON_COMMAND(ID_IDEALFILTER, &Czwj206View::OnIdealfilter)
 	ON_UPDATE_COMMAND_UI(ID_IDEALFILTER, &Czwj206View::OnUpdateIdealfilter)
+	ON_COMMAND(ID_BUTTERWORTH, &Czwj206View::OnButterworth)
+	ON_UPDATE_COMMAND_UI(ID_BUTTERWORTH, &Czwj206View::OnUpdateButterworth)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -423,5 +425,20 @@ void Czwj206View::OnIdealfilter()
 void Czwj206View::OnUpdateIdealfilter(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+	pCmdUI->Enable(FD_Available());
+}
+
+void Czwj206View::OnButterworth()
+{
+	// TODO: 在此添加命令处理程序代码
+	Param dlg;
+	if (IDOK == dlg.DoModal())
+		Butterworth_Filter_FFT(dlg.m_nDis); //建议使用对话框输入截止半径
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateButterworth(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(FD_Available());
 }

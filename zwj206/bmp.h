@@ -73,3 +73,6 @@ void GradSharp();
 
 // 理想滤波：D>0低通，D<0高通
 void FFT_Filter(int D);
+
+//巴特沃斯低通(D>0)、高通(D<0)滤波，阶数n=1
+void Butterworth_Filter_FFT(int D);

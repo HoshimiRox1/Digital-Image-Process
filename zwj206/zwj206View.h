@@ -72,6 +72,8 @@ public:
 	afx_msg void OnUpdateGradsharp(CCmdUI* pCmdUI);
 	afx_msg void OnIdealfilter();
 	afx_msg void OnUpdateIdealfilter(CCmdUI* pCmdUI);
+	afx_msg void OnButterworth();
+	afx_msg void OnUpdateButterworth(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本
