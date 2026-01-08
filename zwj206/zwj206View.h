@@ -64,6 +64,8 @@ public:
 	afx_msg void OnUpdateIfft(CCmdUI* pCmdUI);
 	afx_msg void OnAvgsmooth();
 	afx_msg void OnUpdateAvgsmooth(CCmdUI* pCmdUI);
+	afx_msg void OnMidsmooth();
+	afx_msg void OnUpdateMidsmooth(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本

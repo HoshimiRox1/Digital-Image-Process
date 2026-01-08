@@ -99,15 +99,16 @@
 #define ID_IFT                          32793
 #define ID_FFT                          32794
 #define ID_IFFT                         32795
-#define ID_BUTTON32799                  32799
 #define ID_AVGSMOOTH                    32799
+#define ID_BUTTON32802                  32802
+#define ID_MIDSMOOTH                    32802
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32800
+#define _APS_NEXT_COMMAND_VALUE         32803
 #define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

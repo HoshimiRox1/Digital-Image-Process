@@ -58,3 +58,9 @@ void Template(int* Array, float coef);
 
 // 均值滤波
 void AvgSmooth();
+
+// 获取中值
+BYTE WINAPI GetMedianNum(BYTE* Array);
+
+// 中值滤波
+void MidSmooth();

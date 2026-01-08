@@ -757,3 +757,75 @@ void AvgSmooth() {
 	Array[6] = 1;	Array[7] = 1;	Array[8] = 1;
 	Template(Array, (float)1 / 9);
 }
+
+// 获取中值
+BYTE WINAPI GetMedianNum(BYTE* Array)
+{
+	int i, j;
+	BYTE temp;
+	// 用冒泡法对数组进行排序
+	for (j = 0; j < 9 - 1; j++)
+	{
+		for (i = 0; i < 9 - j - 1; i++)
+		{
+			if (Array[i] > Array[i + 1])
+			{
+				temp = Array[i];
+				Array[i] = Array[i + 1];
+				Array[i + 1] = temp;
+			}
+		}
+	}
+	// 返回中值
+	return Array[4];
+}
+
+// 中值滤波
+void MidSmooth()
+{
+	// 图像的宽度和高度
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	// 每行的字节数（必须是4的倍数）
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	// 指向原图像数据的指针
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+	// 为新图象分配内存
+	BITMAPINFO* new_lpBitsInfo;
+	LONG size = sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD) + h * LineBytes;
+	if (NULL == (new_lpBitsInfo = (LPBITMAPINFO)malloc(size)))
+		return;
+	// 复制BMP
+	memcpy(new_lpBitsInfo, lpBitsInfo, size);
+	// 找到新图像象素起始位置
+	BYTE* lpNewBits = (BYTE*)&new_lpBitsInfo->bmiColors[new_lpBitsInfo->bmiHeader.biClrUsed];
+
+	int i, j, k, l;
+	BYTE* pixel, * new_pixel;
+	BYTE Value[9]; //3x3模板
+	// 行(除去边缘几行)
+	for (i = 1; i < h - 1; i++)
+	{
+		// 列(除去边缘几列)
+		for (j = 1; j < w - 1; j++)
+		{
+			// 指向新图第i行，第j个象素的指针
+			new_pixel = lpNewBits + LineBytes * (h - 1 - i) + j;
+			// 计算 3x3模板内像素的灰度值
+			for (k = 0; k < 3; k++)
+			{
+				for (l = 0; l < 3; l++)
+				{
+					// 指向原图第i - 1 + k行，第j - 1 + l个象素的指针
+					pixel = lpBits + LineBytes * (h - i - k) + j - 1 + l;
+					// 保存象素值
+					Value[k * 3 + l] = *pixel;
+				}
+			}
+			// 获取中值
+			*new_pixel = GetMedianNum(Value);
+		}
+	}
+	free(lpBitsInfo);
+	lpBitsInfo = new_lpBitsInfo;
+}
