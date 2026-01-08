@@ -44,3 +44,11 @@ BOOL is_gFD_OK();
 // 傅里叶反变换显示
 void IFourier();
 BOOL FD_Available();
+
+// 快速傅里叶变换
+void FFT(complex<double>* TD, complex<double>* FD, int r);
+void FFourier();
+
+// 快速反变换
+void IFFT(complex<double>* FD, complex<double>* TD, int r);
+void IFFourier();

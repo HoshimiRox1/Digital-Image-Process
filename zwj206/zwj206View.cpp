@@ -46,6 +46,10 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_FT, &Czwj206View::OnUpdateFt)
 	ON_COMMAND(ID_IFT, &Czwj206View::OnIft)
 	ON_UPDATE_COMMAND_UI(ID_IFT, &Czwj206View::OnUpdateIft)
+	ON_COMMAND(ID_FFT, &Czwj206View::OnFft)
+	ON_UPDATE_COMMAND_UI(ID_FFT, &Czwj206View::OnUpdateFft)
+	ON_COMMAND(ID_IFFT, &Czwj206View::OnIfft)
+	ON_UPDATE_COMMAND_UI(ID_IFFT, &Czwj206View::OnUpdateIfft)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -83,39 +87,8 @@ void Czwj206View::OnDraw(CDC* pDC)
     if (lpBitsInfo == nullptr)
         return;
 
-    // 1. 获取图像的原始尺寸
-    int w = lpBitsInfo->bmiHeader.biWidth;
-    int h = lpBitsInfo->bmiHeader.biHeight;
-    // 确保使用绝对高度，因为 BMP 图像头可能存储负值
-    int absH = abs(h);
-
-    // 2. 获取窗口尺寸和计算居中位置
-    CRect rectClient;
-    GetClientRect(&rectClient);
-
-    // 3. 获取像素数据的起始地址
-    // 保持与 Gray() 函数中的计算方式一致
     BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 
-    // 4. 使用 StretchDIBits 绘制
-    StretchDIBits(
-        pDC->GetSafeHdc(),     // 设备句柄
-        0,					   // 左上角x
-        0,					   // 左上角y
-        w,                     // **目标宽度：设置为图像原始宽度**
-        absH,                  // **目标高度：设置为图像原始高度**
-        0,                     // 源 X 坐标 (从图像左侧开始)
-        0,                     // 源 Y 坐标 (从图像底部开始)
-        w,                     // 源宽度 (图像原始宽度)
-        absH,                  // 源高度 (图像原始高度)
-        lpBits,                // 像素数据
-        lpBitsInfo,            // BITMAPINFO 结构体
-        DIB_RGB_COLORS,        // 颜色使用 RGB 模式
-        SRCCOPY                // 复制源图像
-    );
-
-	// 傅里叶有关逻辑
-	lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
 	StretchDIBits(pDC->GetSafeHdc(),
 		0, 0, lpBitsInfo->bmiHeader.biWidth, lpBitsInfo->bmiHeader.biHeight,//图像的宽度高度，目标区域的矩形框
 		0, 0, lpBitsInfo->bmiHeader.biWidth, lpBitsInfo->bmiHeader.biHeight,//原图的宽度和高度
@@ -148,7 +121,7 @@ void Czwj206View::OnInitialUpdate()
 
 	CSize sizeTotal;
 	// TODO: 计算此视图的合计大小
-	sizeTotal.cx = sizeTotal.cy = 100;
+	sizeTotal.cx = sizeTotal.cy = 1200;
 	SetScrollSizes(MM_TEXT, sizeTotal);
 }
 
@@ -323,4 +296,49 @@ void Czwj206View::OnUpdateIft(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+}
+
+BOOL is_gFD_OK();
+void FFourier();
+void Czwj206View::OnFft()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (lpDIB_FT)
+	{
+		free(lpDIB_FT);
+		lpDIB_FT = NULL;
+	}
+	if (lpDIB_IFT)
+	{
+		free(lpDIB_IFT);
+		lpDIB_IFT = NULL;
+	}
+
+	FFourier();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateFft(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
+}
+
+void IFFourier();
+void Czwj206View::OnIfft()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (lpDIB_IFT)
+	{
+		free(lpDIB_IFT);
+		lpDIB_IFT = NULL;
+	}
+	IFFourier();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateIfft(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(is_gFD_OK());
 }
