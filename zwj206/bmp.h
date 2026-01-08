@@ -52,3 +52,9 @@ void FFourier();
 // 快速反变换
 void IFFT(complex<double>* FD, complex<double>* TD, int r);
 void IFFourier();
+
+// 模板函数
+void Template(int* Array, float coef);
+
+// 均值滤波
+void AvgSmooth();

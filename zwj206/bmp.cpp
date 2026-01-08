@@ -689,3 +689,71 @@ void IFFourier()
 	delete gFD;
 	gFD = NULL;
 }
+
+// 模板函数
+void Template(int* Array, float coef)
+{
+	// 图像的宽度和高度
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	// 每行的字节数（必须是4的倍数）
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	// 指向原图像数据的指针
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+	// 为新图象分配内存
+	BITMAPINFO* new_lpBitsInfo;
+	LONG size = sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD) + h * LineBytes;
+	if (NULL == (new_lpBitsInfo = (LPBITMAPINFO)malloc(size)))
+		return;
+	// 复制BMP
+	memcpy(new_lpBitsInfo, lpBitsInfo, size);
+	// 找到新图像象素起始位置
+	BYTE* lpNewBits = (BYTE*)&new_lpBitsInfo->bmiColors[new_lpBitsInfo->bmiHeader.biClrUsed];
+
+	int i, j, k, l;
+	BYTE* pixel, * new_pixel;
+	float result;
+
+	// 行(除去边缘几行)
+	for (i = 1; i < h - 1; i++)
+	{
+		// 列(除去边缘几列)
+		for (j = 1; j < w - 1; j++)
+		{
+			// 指向新图第i行，第j个象素的指针
+			new_pixel = lpNewBits + LineBytes * (h - 1 - i) + j;
+			result = 0;
+			// 计算3x3模板内像素灰度值的和
+			for (k = 0; k < 3; k++)
+			{
+				for (l = 0; l < 3; l++)
+				{
+					// 指向原图在模板内每个像素点的灰度值，第i - 1 + k行，第j - 1 + l个象素的指针
+					pixel = lpBits + LineBytes * (h - i - k) + j - 1 + l;
+					// 灰度值乘上模板系数后累加
+					result += (*pixel) * Array[k * 3 + l];
+				}
+			}
+			// 乘上系数
+			result *= coef;
+			if (result < 0)
+				*new_pixel = 0;
+			else if (result > 255)
+				*new_pixel = 255;
+			else
+				*new_pixel = (BYTE)(result + 0.5);
+		}
+	}
+	free(lpBitsInfo);
+	lpBitsInfo = new_lpBitsInfo;
+}
+
+// 均值滤波
+void AvgSmooth() {
+	int Array[9]; //3x3模板
+	//标准均值滤波
+	Array[0] = 1;	Array[1] = 1;	Array[2] = 1;
+	Array[3] = 1;	Array[4] = 1;	Array[5] = 1;
+	Array[6] = 1;	Array[7] = 1;	Array[8] = 1;
+	Template(Array, (float)1 / 9);
+}

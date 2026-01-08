@@ -50,6 +50,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_UPDATE_COMMAND_UI(ID_FFT, &Czwj206View::OnUpdateFft)
 	ON_COMMAND(ID_IFFT, &Czwj206View::OnIfft)
 	ON_UPDATE_COMMAND_UI(ID_IFFT, &Czwj206View::OnUpdateIfft)
+	ON_COMMAND(ID_AVGSMOOTH, &Czwj206View::OnAvgsmooth)
+	ON_UPDATE_COMMAND_UI(ID_AVGSMOOTH, &Czwj206View::OnUpdateAvgsmooth)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -341,4 +343,18 @@ void Czwj206View::OnUpdateIfft(CCmdUI* pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->Enable(is_gFD_OK());
+}
+
+void AvgSmooth();
+void Czwj206View::OnAvgsmooth()
+{
+	// TODO: 在此添加命令处理程序代码
+	AvgSmooth();
+	Invalidate();
+}
+
+void Czwj206View::OnUpdateAvgsmooth(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != NULL && IsGray());
 }
