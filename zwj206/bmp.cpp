@@ -159,3 +159,26 @@ void pixel(int i, int j, char* str) {
 		break;
 	}
 }
+
+// 直方图数组
+DWORD H[256];
+void Histogram() {
+	int w = lpBitsInfo->bmiHeader.biWidth;
+	int h = lpBitsInfo->bmiHeader.biHeight;
+	int LineBytes = (w * lpBitsInfo->bmiHeader.biBitCount + 31) / 32 * 4;
+	BYTE* lpBits = (BYTE*)&lpBitsInfo->bmiColors[lpBitsInfo->bmiHeader.biClrUsed];
+
+	int i, j;
+	BYTE* pixel;
+
+	for (i = 0; i < 256; i++) {
+		H[i] = 0;
+	}
+
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			pixel = lpBits + LineBytes * (h - 1 - i) + j;
+			H[*pixel]++;
+		}
+	}
+}

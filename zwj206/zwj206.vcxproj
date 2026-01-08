@@ -186,9 +186,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="bmp.h" />
+    <ClInclude Include="CHistogramDlg.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="HistogramDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pch.h" />
@@ -202,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bmp.cpp" />
+    <ClCompile Include="CHistogramDlg.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />

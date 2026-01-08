@@ -48,6 +48,8 @@ public:
 	afx_msg void OnTogrey();
 	afx_msg void OnUpdateTogrey(CCmdUI* pCmdUI);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnHistogram();
+	afx_msg void OnUpdateHistogram(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // zwj206View.cpp 中的调试版本

@@ -8,11 +8,12 @@
 // SHARED_HANDLERS 可以在实现预览、缩略图和搜索筛选器句柄的
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
 #ifndef SHARED_HANDLERS
-#include "zwj206.h"
+#include "zwj206.h"   
 #endif
 
 #include "zwj206Doc.h"
 #include "zwj206View.h"
+#include "CHistogramDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,8 @@ BEGIN_MESSAGE_MAP(Czwj206View, CScrollView)
 	ON_COMMAND(ID_TOGREY, &Czwj206View::OnTogrey)
 	ON_UPDATE_COMMAND_UI(ID_TOGREY, &Czwj206View::OnUpdateTogrey)
 	ON_WM_MOUSEMOVE()
+	ON_COMMAND(ID_HISTOGRAM, &Czwj206View::OnHistogram)
+	ON_UPDATE_COMMAND_UI(ID_HISTOGRAM, &Czwj206View::OnUpdateHistogram)
 END_MESSAGE_MAP()
 
 // Czwj206View 构造/析构
@@ -210,4 +213,17 @@ void Czwj206View::OnMouseMove(UINT nFlags, CPoint point)
 	((CFrameWnd*)GetParent())->SetMessageText(CString(xy));
 
 	CScrollView::OnMouseMove(nFlags, point);
+}
+
+void Czwj206View::OnHistogram()
+{
+	// TODO: 在此添加命令处理程序代码
+	CHistogramDlg dlg;
+	dlg.DoModal();
+}
+
+void Czwj206View::OnUpdateHistogram(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->Enable(lpBitsInfo != nullptr && IsGray()); 
 }
